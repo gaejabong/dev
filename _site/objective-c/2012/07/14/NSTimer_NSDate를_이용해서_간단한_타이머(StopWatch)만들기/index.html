@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>NSTimer, NSDate를 이용해서 간단한 타이머(StopWatch)만들기 &#8211; 프로그래밍 놀이</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="스택 기반 타이머를 만들기 위해서는 먼저 기본적인 타이머를 구현해 보는 것이 필요했다. 아직 iOS에서 Hello World도 겨우 구현하는 내가 타이머를 쉽게 만들 수는 없는 일이었다. 구글링을 하다보니 iOS5의 환경에 맞지는 않지만 그래도 충분히 참고할 수 있는 글을 하나 발견했다.">
+    <meta name="author" content="jdssem">
+    <meta name="keywords" content="objective-c">
+    <link rel="canonical" href="http://localhost:4000/objective-c/2012/07/14/NSTimer_NSDate%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5_%E1%84%80%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AB%E1%84%92%E1%85%A1%E1%86%AB_%E1%84%90%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5(StopWatch)%E1%84%86%E1%85%A1%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%80%E1%85%B5/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201502012359" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="NSTimer, NSDate를 이용해서 간단한 타이머(StopWatch)만들기">
+    <meta property="og:description" content="Programming for fun!">
+    <meta property="og:url" content="http://localhost:4000/objective-c/2012/07/14/NSTimer_NSDate%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5_%E1%84%80%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AB%E1%84%92%E1%85%A1%E1%86%AB_%E1%84%90%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5(StopWatch)%E1%84%86%E1%85%A1%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%80%E1%85%B5/">
+    <meta property="og:site_name" content="프로그래밍 놀이">
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://localhost:4000" class="site-title">프로그래밍 놀이</a>
+      <nav class="site-nav right">
+        <a href="/about/">About</a>
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  <h1>NSTimer, NSDate를 이용해서 간단한 타이머(StopWatch)만들기</h1>
+  <span class="post-meta">2012년 7월 14일</span><br>
+    
+  <span class="post-meta small">
+  
+    3분 분량
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <p><a href="http://xrath.com/2012/05/time-management-based-on-stack">스택 기반 타이머</a>를 만들기 위해서는 먼저 기본적인 타이머를 구현해 보는 것이 필요했다. 아직 iOS에서 Hello World도 겨우 구현하는 내가 타이머를 쉽게 만들 수는 없는 일이었다. 구글링을 하다보니 iOS5의 환경에 맞지는 않지만 그래도 충분히 참고할 수 있는 글을 하나 발견했다. 바로 <a href="http://www.apptite.be/blog/ios/sample-ios-application-stopwatch">Sample iPhone Application: StopWatch Tutorial</a>이다.</p>
+
+<p>Outlet이나 Action의 개념은 이제 이해했기 때문에 UI를 꾸미고 그에 대한 메소드를 입력하는 것에는 큰 어려움이 없었다. 하지만 소스의 일부분은 iOS5에서 더이상 사용하지 않는 방식이라 조금 생소하기도 했다.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">updateTimer</span>
+<span class="p">{</span>
+    <span class="bp">NSDate</span> <span class="o">*</span><span class="n">currentDate</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSDate</span> <span class="n">date</span><span class="p">];</span>
+    <span class="n">NSTimeInterval</span> <span class="n">timeInterval</span> <span class="o">=</span> <span class="p">[</span><span class="n">currentDate</span> <span class="nl">timeIntervalSinceDate</span><span class="p">:</span><span class="n">startDate</span><span class="p">];</span>
+    <span class="bp">NSDate</span> <span class="o">*</span><span class="n">timerDate</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSDate</span> <span class="nl">dateWithTimeIntervalSince1970</span><span class="p">:</span><span class="n">timeInterval</span><span class="p">];</span>
+    <span class="bp">NSDateFormatter</span> <span class="o">*</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSDateFormatter</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">dateFormatter</span> <span class="nl">setDateFormat</span><span class="p">:</span><span class="s">@&quot;HH:mm:ss.SSS&quot;</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">dateFormatter</span> <span class="nl">setTimeZone</span><span class="p">:[</span><span class="bp">NSTimeZone</span> <span class="nl">timeZoneForSecondsFromGMT</span><span class="p">:</span><span class="mf">0.0</span><span class="p">]];</span>
+    <span class="bp">NSString</span> <span class="o">*</span><span class="n">timeString</span><span class="o">=</span><span class="p">[</span><span class="n">dateFormatter</span> <span class="nl">stringFromDate</span><span class="p">:</span><span class="n">timerDate</span><span class="p">];</span>
+    <span class="n">stopWatchLabel</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">timeString</span><span class="p">;</span>
+    <span class="p">[</span><span class="n">dateFormatter</span> <span class="k">release</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
+
+<p>에서 <code>[dateFormatter release];</code>나 <code>startDate = [[NSDate date]retain];</code>
+같은 부분들이다.</p>
+
+<p>새로워진 부분들은 잘 이해가 되지 않는 것도 있지만 <a href="http://itunes.apple.com/kr/itunes-u/ipad-iphone-application-development/id473757255">iTunes U - iPad and iPhone Application Development</a>를 통해서 알아가고 있으니 차차 좋아질 것이라고 생각한다. 여하튼 소스코드를 참고해서 실행을 시켜보니 Timer가 제대로 가지 않고 00:01:00 만 계속 출력되는 것이었다. 처음에는 무엇이 문제인지 알 수가 없어서 공부하는 셈치고 <code>NSTimer</code>, <code>NSDate</code>의 Reference를 훑어보았다. 하지만 아무리 살펴보아도 문법에 어긋나거나 잘못된 부분을 찾을 수가 없었다.</p>
+
+<p>그래서 nslog를 통해 콘솔로 데이터 값을 확인해 보면서 디버깅하려 했지만 콘솔을 통해 보는 것은 한계가 있었다. 그래서 Breakpoint를 설정하고 변수 값들을 상세히 살펴보았다.</p>
+
+<p><img src="/images/2012-07-14/stacktimer.png" alt="" /></p>
+
+<p>이 화면에서 볼 수 있듯이 처음 Start 버튼을 눌렀을 때의 날짜와 시간을 저장해두는 startDate, 매1초마다 현재의 시간을 저장하는 currentDate, startDate과 currentDate의 시간차이를 계산해서 저장하는 timeInterval, 그리고 1970년 1월 1일을 기준으로(00:00:00) timeInterval 만큼 시간을 더해나가는 timerDate까지 모두 이상 없이 저장이 잘 되고 있다는 사실을 확인할 수 있었다. 다만 일정 형식에 맞게 NSDate 클래스를 NSString으로 변환해주는 dateFormatter를 거치고 나면 항상 값이 00:01:00 으로 변한다는 사실을 알게 되었다.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">updateTimer</span>
+<span class="p">{</span>
+    <span class="bp">NSDate</span> <span class="o">*</span><span class="n">currentDate</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSDate</span> <span class="n">date</span><span class="p">];</span>
+    <span class="n">NSTimeInterval</span> <span class="n">timeInterval</span> <span class="o">=</span> <span class="p">[</span><span class="n">currentDate</span> <span class="nl">timeIntervalSinceDate</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">startDate</span><span class="p">];</span>
+    <span class="c1">// NSLog([NSString stringWithFormat:@&quot;%f&quot;, timeInterval]);</span>
+    <span class="bp">NSDate</span> <span class="o">*</span><span class="n">timerDate</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSDate</span> <span class="nl">dateWithTimeIntervalSince1970</span><span class="p">:</span><span class="n">timeInterval</span><span class="p">];</span>
+    <span class="bp">NSDateFormatter</span> <span class="o">*</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSDateFormatter</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">dateFormatter</span> <span class="nl">setDateFormat</span><span class="p">:</span><span class="s">@&quot;HH:mm:ss&quot;</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">dateFormatter</span> <span class="nl">setTimeZone</span><span class="p">:[</span><span class="bp">NSTimeZone</span> <span class="nl">timeZoneForSecondsFromGMT</span><span class="p">:</span><span class="mf">0.0</span><span class="p">]];</span>
+    <span class="bp">NSString</span> <span class="o">*</span><span class="n">timeString</span> <span class="o">=</span> <span class="p">[</span><span class="n">dateFormatter</span> <span class="nl">stringFromDate</span><span class="p">:</span><span class="n">timerDate</span><span class="p">];</span>
+    <span class="c1">//NSLog(timeString);</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">timeDisplay</span> <span class="nl">setText</span><span class="p">:</span><span class="n">timeString</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
+
+<p>이 중에서 의심가는 부분은 딱 하나 바로 <code>[dateFormatter setDateFormat:@"HH:mm:ss"];</code>였다. 그래서 <code>NSDateFormatter</code>를 살펴보았고 Reference에서 <a href="https://developer.apple.com/library/ios/#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html#//apple_ref/doc/uid/TP40002369-SW1">Data Formatting Guide</a>를 안내하길래 들어가 보았다. 그리고 가이드에 실려 있는 예제어서 다음과 같은 부분을 찾을 수 있었다.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="p">[</span><span class="n">rfc3339DateFormatter</span> <span class="nl">setDateFormat</span><span class="p">:</span><span class="s">@&quot;yyyy&#39;-&#39;MM&#39;-&#39;dd&#39;T&#39;HH&#39;:&#39;mm&#39;:&#39;ss&#39;Z&#39;&quot;</span><span class="p">];</span></code></pre></div>
+
+<p>어라, 연도와 날짜를 나타내는 구분자 외의 문자를 표현하기 위해 작은 따옴표를 사용하는 것이 아닌가. 그래서 updateTimer 메소드를 수정해봤다.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">updateTimer</span>
+<span class="p">{</span>
+    <span class="bp">NSDate</span> <span class="o">*</span><span class="n">currentDate</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSDate</span> <span class="n">date</span><span class="p">];</span>
+    <span class="n">NSTimeInterval</span> <span class="n">timeInterval</span> <span class="o">=</span> <span class="p">[</span><span class="n">currentDate</span> <span class="nl">timeIntervalSinceDate</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">startDate</span><span class="p">];</span>
+    <span class="c1">// NSLog([NSString stringWithFormat:@&quot;%f&quot;, timeInterval]);</span>
+    <span class="bp">NSDate</span> <span class="o">*</span><span class="n">timerDate</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSDate</span> <span class="nl">dateWithTimeIntervalSince1970</span><span class="p">:</span><span class="n">timeInterval</span><span class="p">];</span>
+    <span class="bp">NSDateFormatter</span> <span class="o">*</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSDateFormatter</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">dateFormatter</span> <span class="nl">setDateFormat</span><span class="p">:</span><span class="s">@&quot;HH&#39;:&#39;mm&#39;:&#39;ss&quot;</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">dateFormatter</span> <span class="nl">setTimeZone</span><span class="p">:[</span><span class="bp">NSTimeZone</span> <span class="nl">timeZoneForSecondsFromGMT</span><span class="p">:</span><span class="mf">0.0</span><span class="p">]];</span>
+    <span class="bp">NSString</span> <span class="o">*</span><span class="n">timeString</span> <span class="o">=</span> <span class="p">[</span><span class="n">dateFormatter</span> <span class="nl">stringFromDate</span><span class="p">:</span><span class="n">timerDate</span><span class="p">];</span>
+    <span class="c1">//NSLog(timeString);</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">timeDisplay</span> <span class="nl">setText</span><span class="p">:</span><span class="n">timeString</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
+
+<p>그리고 실행을 다시 해보니…</p>
+
+<p><img src="/images/2012-07-14/stacktimer_success.png" alt="" /></p>
+
+<p>빙고!</p>
+
+<p>지나고 나서 돌이켜보면 별것 아닌 것 같지만 이렇게 하나씩 내 힘으로 문제를 해결해 나가는 것이 재미있다. 다음 시간에는 Pause와 Reset을 구현해보고 소스를 조금 수정해서 StackTimer Class를 정의하고 Stack에 StackTimer Object를 저장하는 것까지 완성해봐야겠다. 오늘의 공부 끝!</p>
+
+</article>
+
+
+
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname  = 'hangoutwithprogramming';
+    var disqus_identifier = '/objective-c/2012/07/14/NSTimer_NSDate를_이용해서_간단한_타이머(StopWatch)만들기';
+    var disqus_title      = '';
+
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+        © dev.jdssem.com
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>

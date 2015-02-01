@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>xe 디버깅하기 &#8211; 프로그래밍 놀이</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="사용자 설정 파일 config/config.user.inc.php 를 작성해 놓으면 config/config.inc.php 파일의 설정보다 우선해서 적용되어 디버깅이 가능하다.">
+    <meta name="author" content="jdssem">
+    <meta name="keywords" content="xpressengine">
+    <link rel="canonical" href="http://localhost:4000/xpressengine/2012/08/14/xe_%E1%84%83%E1%85%B5%E1%84%87%E1%85%A5%E1%84%80%E1%85%B5%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201502012359" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="xe 디버깅하기">
+    <meta property="og:description" content="Programming for fun!">
+    <meta property="og:url" content="http://localhost:4000/xpressengine/2012/08/14/xe_%E1%84%83%E1%85%B5%E1%84%87%E1%85%A5%E1%84%80%E1%85%B5%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/">
+    <meta property="og:site_name" content="프로그래밍 놀이">
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://localhost:4000" class="site-title">프로그래밍 놀이</a>
+      <nav class="site-nav right">
+        <a href="/about/">About</a>
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  <h1>xe 디버깅하기</h1>
+  <span class="post-meta">2012년 8월 14일</span><br>
+    
+  <span class="post-meta small">
+  
+    1분 분량
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <p>사용자 설정 파일 config/config.user.inc.php 를 작성해 놓으면 config/config.inc.php 파일의 설정보다 우선해서 적용되어 디버깅이 가능하다.</p>
+
+<h3 id="configuserincphp-">config.user.inc.php 예시</h3>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;__DEBUG__&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;__DEBUG_OUTPUT__&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;__DEBUG_PROTECT__&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;__DEBUG_PROTECT_IP__&#39;</span><span class="p">,</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;__DEBUG_DB_OUTPUT__&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;__LOG_SLOW_QUERY__&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;__OB_GZHANDLER_ENABLE__&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;__ENABLE_PHPUNIT_TEST__&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="cp">?&gt;</span><span class="x"></span></code></pre></div>
+
+<h3 id="configuserincphp--1">config.user.inc.php 설정</h3>
+
+<p><strong>__DEBUG__</strong></p>
+
+<p>기본값은 0 으로, 이것은 디버깅 메시지 출력을 할 것인지, 어떤 것을 할 것인지를 설정하는 지시자이다.</p>
+
+<ul>
+  <li>0 : 디버그 메시지를 생성/ 출력하지 않음</li>
+  <li>1 : debugPrint() 함수를 통한 메시지 출력</li>
+  <li>2 : 소요시간, Request/Response info 출력</li>
+  <li>4 : DB 쿼리 내역 출력</li>
+</ul>
+
+<p>이 지시자의 설정값은 비트 OR 연산으로 값을 설정한다. 예를 들어, 모든 설정을 활성시키고자 한다면 7로 설정하면 된다.</p>
+
+<p><strong>__DEBUG_OUTPUT__</strong></p>
+
+<p>기본값은 0 으로, 이것은 디버그 메시지의 출력 방법에 대해 설정하는 지시자이다.</p>
+
+<p>0 : files/_debug_message.php 에 연결하여 출력
+1 : HTML 최하단에 주석으로 출력 (Response Method가 HTML 일 때)
+2 : Firebug 콘솔에 출력 </p>
+
+<p><strong>__DEBUG_PROTECT__</strong></p>
+
+<p>기본값은 1 이고  디버깅 메시지를 특정 IP 주소에서만 보여줄 것인지 모든 아이피에서 볼 수 있게 할 것인지를 설정한다.</p>
+
+<ul>
+  <li>0 : 제한 없음 (권장하지 않음)</li>
+  <li>1 : 지정한 IP 주소에만 허용</li>
+</ul>
+
+<p>가급적 1 로 설정하는 것이 좋을 것이다. 그렇지 않은 경우 이로 인해 발생할 수도 있는 문제는 심각해질 수도 있다.</p>
+
+<p><strong>__DEBUG_PROTECT_IP__</strong></p>
+
+<p>기본값은 127.0.0.1 이고, 이 지시자는 <strong>DEBUG_PROTECT</strong> 지시자의 값을 1로 설정했을 때 디버그 메시지 출력을 허용할 IP 주소를 설정하는 것이다. 여기에는 자신의 IP 주소를 설정해주면 된다.</p>
+
+<h3 id="section">디버깅 메시지 출력</h3>
+<p>소스코드에 다음과 같이 debugPrint함수를 추가하면 된다.</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">debugPrint(&quot;Hi, there!!&quot;);</span>
+<span class="x">debugPrint(&quot;document_srl is : &quot;.$document_srl);</span></code></pre></div>
+
+<h3 id="section-1">추천 디버깅 방법</h3>
+
+<p>FirePHP 등은 속도가 느리므로 사용을 추천하지 않는다.
+디버깅 결과를  파일로 저장하도록 ‘<strong>DEBUG_OUTPUT</strong>‘을 0으로 설정하고 터미널에서 <code>tail -f files/_debug_message.php</code> 명령어를 실행하거나
+소스코드에 <code>return new Object(-1, "message");</code> 를 추가한다. 단, 이 방법은 게시물이나 댓글을 작성하는 시점(Context::get(‘act’)==’procBoardInsertDocument’ &amp;&amp; $called_position == ‘before_module_proc’) 등에서는 표시되지 않는다.</p>
+
+<h3 id="section-2">참고자료</h3>
+
+<ul>
+  <li>Xpress Engine 디버깅 이용하기 <a href="http://www.nickspace.cn/xe/s2/339">http://www.nickspace.cn/xe/s2/339</a></li>
+  <li>XE 개발, Firebug + FirePHP로 디버그하기 <a href="http://xinics.tistory.com/73">http://xinics.tistory.com/73</a></li>
+  <li>Firebug와 FirePHP를 통한 XpressEngine의 디버깅 <a href="http://www.xpressengine.com/index.php?mid=tip&amp;search_target=tag&amp;search_keyword=php&amp;page=1&amp;document_srl=17899854">http://www.xpressengine.com/index.php?mid=tip&amp;search_target=tag&amp;search_keyword=php&amp;page=1&amp;document_srl=17899854</a></li>
+</ul>
+
+</article>
+
+
+
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname  = 'hangoutwithprogramming';
+    var disqus_identifier = '/xpressengine/2012/08/14/xe_디버깅하기';
+    var disqus_title      = '';
+
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+        © dev.jdssem.com
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>

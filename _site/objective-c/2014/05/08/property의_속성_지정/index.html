@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@property의 속성 지정 &#8211; 프로그래밍 놀이</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="property에는 크게 4종류의 옵션이 지정가능하다. 1. 메서드명(getter, setter) 2. 읽기/쓰기 속성(readonly, readwrite) 3. 값 설정 방법(assign, retain, unsafe_unretained, strong, weak, copy) 4. 메모리 관리 속성(nonatomic)">
+    <meta name="author" content="jdssem">
+    <meta name="keywords" content="objective-c">
+    <link rel="canonical" href="http://localhost:4000/objective-c/2014/05/08/property%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%8C%E1%85%B5%E1%84%8C%E1%85%A5%E1%86%BC/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201502012359" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="@property의 속성 지정">
+    <meta property="og:description" content="Programming for fun!">
+    <meta property="og:url" content="http://localhost:4000/objective-c/2014/05/08/property%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%8C%E1%85%B5%E1%84%8C%E1%85%A5%E1%86%BC/">
+    <meta property="og:site_name" content="프로그래밍 놀이">
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://localhost:4000" class="site-title">프로그래밍 놀이</a>
+      <nav class="site-nav right">
+        <a href="/about/">About</a>
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+
+
+<div class="post-header mb2">
+  <h1>@property의 속성 지정</h1>
+  <span class="post-meta">2014년 5월 8일</span><br>
+    
+  <span class="post-meta small">
+  
+    1분 분량
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <p>@property에는 크게 4종류의 옵션이 지정가능하다.</p>
+
+<ol>
+  <li>메서드명(getter, setter)</li>
+  <li>읽기/쓰기 속성(readonly, readwrite)</li>
+  <li>값 설정 방법(assign, retain, unsafe_unretained, strong, weak, copy)</li>
+  <li>메모리 관리 속성(nonatomic)
+ ARC 메모리 관리와 관련된 내용은 다음 사이트 참고.
+ <a href="http://soooprmx.com/wp/archives/4174">http://soooprmx.com/wp/archives/4174</a></li>
+</ol>
+
+<hr />
+<p>이 글을 쓰는 이유는 인디스쿨 앱을 실행할 때 메모리 누수가 발생하기 때문이다. 원인이 무엇인지는 조금 더 파악해봐야 알겠지만 property 설정을 제대로 해주지 않았거나 값을 불러오거나 저장할 때 getter나 setter를 사용하지 않은 부분이 있기 때문일 가능성이 크다.</p>
+<p>&nbsp;</p>
+
+</article>
+
+
+
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname  = 'hangoutwithprogramming';
+    var disqus_identifier = '/objective-c/2014/05/08/property의_속성_지정';
+    var disqus_title      = '';
+
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+        © dev.jdssem.com
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>NSURLSession 클래스를 활용해 XE 로그인하기 &#8211; 프로그래밍 놀이</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="인디스쿨 앱의 핵심적인 기능 중 한 가지는 바로 게시물의 내용을 가져오는 것이다. XE에서는 API를 통해 JSON 형태로 데이터를 가지고 올 수 있다고 하니 일단 iOS쪽에서 URL Request를 보내는 것에 대한 공부가 필요했다. 이와 관련해서 참고할 수 있는 애플 개발자 문서가 있었다.">
+    <meta name="author" content="jdssem">
+    <meta name="keywords" content="xpressengine">
+    <link rel="canonical" href="http://localhost:4000/xpressengine/2014/04/02/NSURLSession_%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A2%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%92%E1%85%AA%E1%86%AF%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2_XE_%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201502012359" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="NSURLSession 클래스를 활용해 XE 로그인하기">
+    <meta property="og:description" content="Programming for fun!">
+    <meta property="og:url" content="http://localhost:4000/xpressengine/2014/04/02/NSURLSession_%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A2%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%92%E1%85%AA%E1%86%AF%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2_XE_%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/">
+    <meta property="og:site_name" content="프로그래밍 놀이">
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://localhost:4000" class="site-title">프로그래밍 놀이</a>
+      <nav class="site-nav right">
+        <a href="/about/">About</a>
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  <h1>NSURLSession 클래스를 활용해 XE 로그인하기</h1>
+  <span class="post-meta">2014년 4월 2일</span><br>
+    
+  <span class="post-meta small">
+  
+    3분 분량
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <p>인디스쿨 앱의 핵심적인 기능 중 한 가지는 바로 게시물의 내용을 가져오는 것이다. XE에서는 API를 통해 JSON 형태로 데이터를 가지고 올 수 있다고 하니 일단 iOS쪽에서 URL Request를 보내는 것에 대한 공부가 필요했다. 이와 관련해서 참고할 수 있는 애플 개발자 문서가 있었다. 바로 <a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/URLLoadingSystem/URLLoadingSystem.html#//apple_ref/doc/uid/10000165-BCICJDHA">URL Loading System Programming Guide</a>이다.
+이 문서에 따르면 iOS 7.0 이상과 OS X v10.9 이상에서는 NSURLSession이라는 클래스를 사용하면 가능하다고 한다. 그 이전 버전에서 작동하게 하려면 NSURLConnection 클래스를 사용해야 한다고 하는데 일단 이건 패스하기로 했다.
+같은 문서의 <a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/URLLoadingSystem/NSURLSessionConcepts/NSURLSessionConcepts.html#//apple_ref/doc/uid/10000165i-CH2-SW1">Life Cycle of a URL Session</a>이라는 섹션을 보면 URL Session이 어떤 순서에 의해 기본적으로 동작하는지를 이해할 수 있다.</p>
+
+<ol>
+  <li>Create a session configuration. For background sessions, this configuration must contain a unique identifier. Store that identifier, and use it to reassociate with the session if your app crashes or is terminated or suspended.</li>
+  <li>Create a session, specifying a configuration object and a <code>nil</code> delegate.</li>
+  <li>Create task objects within a session that each represent a resource request.Each task starts out in a suspended state. After your app calls <code>resume</code> on the task, it begins downloading the specified resource.
+The task objects are subclasses of <code>NSURLSessionTask</code>–<code>NSURLSessionDataTask</code>, <code>NSURLSessionUploadTask</code>, or <code>NSURLSessionDownloadTask</code>, depending on the behavior you are trying to achieve. These objects are analogous to <code>NSURLConnection</code> objects, but give you more control and a unified delegate model.
+Although your app can (and typically should) add more than one task to a session, for simplicity, the remaining steps describe the life cycle in terms of a single task.</li>
+  <li>For a download task, during the transfer from the server, if the user tells your app to pause the download, cancel the task by calling<code>cancelByProducingResumeData:</code> method. Later, pass the returned resume data to either the <code>downloadTaskWithResumeData:</code> or<code>downloadTaskWithResumeData:completionHandler:</code> method to create a new download task that continues the download.</li>
+  <li>When a task completes, the <code>NSURLSession</code> object calls the task’s completion handler.</li>
+  <li>When your app no longer needs a session, invalidate it by calling either <code>invalidateAndCancel</code> (to cancel outstanding tasks) or <code>finishTasksAndInvalidate</code> (to allow outstanding tasks to finish before invalidating the object).</li>
+</ol>
+
+<p>인터넷에서 예제 자료를 구하려고 검색을 많이 했었는데 iOS의 메모리 관리 체계가 바뀌기 전의 자료들이 있어서 호환이 되지 않는 경우도 많았다. 여러번의 검색을 통해 대략적으로 파악해서 다음과 같이 소스코드를 제작했다.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="c1">// 세션의 종류 설정</span>
+<span class="bp">NSURLSessionConfiguration</span> <span class="o">*</span><span class="n">defaultConfigObject</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSURLSessionConfiguration</span> <span class="n">defaultSessionConfiguration</span><span class="p">];</span>
+
+<span class="c1">// 세션 생성</span>
+<span class="bp">NSURLSession</span> <span class="o">*</span><span class="n">defaultSession</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSURLSession</span> <span class="nl">sessionWithConfiguration</span><span class="p">:</span> <span class="n">defaultConfigObject</span> <span class="nl">delegate</span><span class="p">:</span> <span class="nb">self</span> <span class="nl">delegateQueue</span><span class="p">:</span> <span class="p">[</span><span class="bp">NSOperationQueue</span> <span class="n">mainQueue</span><span class="p">]];</span>
+<span class="bp">NSURL</span> <span class="o">*</span> <span class="n">loginUrl</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSURL</span> <span class="nl">URLWithString</span><span class="p">:</span><span class="s">@&quot;http://site/?act=procMemberLogin&quot;</span><span class="p">];</span>
+<span class="bp">NSMutableURLRequest</span> <span class="o">*</span> <span class="n">loginRequest</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableURLRequest</span> <span class="nl">requestWithURL</span><span class="p">:</span><span class="n">loginUrl</span><span class="p">];</span>
+<span class="bp">NSString</span> <span class="o">*</span> <span class="n">params</span> <span class="o">=</span> <span class="s">@&quot;user_id=아이디&amp;amp;password=비밀번호&quot;</span><span class="p">;</span>
+<span class="p">[</span><span class="n">loginRequest</span> <span class="nl">setHTTPMethod</span><span class="p">:</span><span class="s">@&quot;POST&quot;</span><span class="p">];</span><span class="o">&lt;</span><span class="n">br</span> <span class="o">/&gt;</span>
+<span class="p">[</span><span class="n">loginRequest</span> <span class="nl">setHTTPBody</span><span class="p">:[</span><span class="n">params</span> <span class="nl">dataUsingEncoding</span><span class="p">:</span><span class="n">NSUTF8StringEncoding</span><span class="p">]];</span>
+<span class="bp">NSURLSessionDataTask</span> <span class="o">*</span> <span class="n">dataTask</span> <span class="o">=</span> <span class="p">[</span><span class="n">defaultSession</span> <span class="nl">dataTaskWithRequest</span><span class="p">:</span><span class="n">loginRequest</span> <span class="nl">completionHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">NSData</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="bp">NSURLResponse</span> <span class="o">*</span><span class="n">response</span><span class="p">,</span> <span class="bp">NSError</span> <span class="o">*</span><span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+
+<span class="c1">// response body출력을 위한 nsdata -&gt; nsstring 변환</span>
+<span class="bp">NSString</span> <span class="o">*</span><span class="n">strData</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSString</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithData</span><span class="p">:</span><span class="n">data</span> <span class="nl">encoding</span><span class="p">:</span><span class="n">NSUTF8StringEncoding</span><span class="p">];</span>
+
+<span class="c1">// 헤더출력&lt;br /&gt;</span>
+<span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="n">response</span><span class="p">);</span><span class="o">&lt;</span><span class="n">br</span> <span class="o">/&gt;</span>
+
+<span class="c1">// response&lt;br /&gt;</span>
+<span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="n">strData</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="p">}];</span>
+<span class="p">[</span><span class="n">dataTask</span> <span class="n">resume</span><span class="p">];</span></code></pre></div>
+
+<p>로그인에 성공하든 성공하지 않든 클라이언트에서 해당 URL에 접속하는 데 문제만 없다면 HTTP 헤더는 status code 200을 보내게 된다. 다만 한 가지 발견한 것이 있다면 로그인에 성공했을 경우에는 다음과 같이 로그인에 성공했을 경우 이동하는 URL이 출력된다. (아래의 경우에는 http://site/home)</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="o">&lt;</span><span class="nl">NSHTTPURLResponse</span><span class="p">:</span> <span class="mh">0x10929b630</span><span class="o">&gt;</span> <span class="p">{</span> <span class="nl">URL</span><span class="p">:</span> <span class="nl">http</span><span class="p">:</span><span class="c1">//site/home }</span></code></pre></div>
+
+<p>반면 로그인에 실패했을 경우에는 로그인을 처리하는 URL이 그대로 출력되는 것을 확인할 수 있었다.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="o">&lt;</span><span class="nl">NSHTTPURLResponse</span><span class="p">:</span> <span class="mh">0x10929b630</span><span class="o">&gt;</span> <span class="p">{</span> <span class="nl">URL</span><span class="p">:</span> <span class="nl">http</span><span class="p">:</span><span class="c1">//site/?act=procMemberLogin }</span></code></pre></div>
+
+<p>현재는 로그인을 위해 xe에 직접 POST로 아이디와 비밀번호는 전송하고 xe/modules/member.controller.php가 처리하는 형태라 보안상으로도 좋지 않기 때문에 추후에는 xe에서 자체 모듈을 개발할 필요가 있어 보인다.</p>
+
+</article>
+
+
+
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname  = 'hangoutwithprogramming';
+    var disqus_identifier = '/xpressengine/2014/04/02/NSURLSession_클래스를_활용해_XE_로그인하기';
+    var disqus_title      = '';
+
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+        © dev.jdssem.com
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>

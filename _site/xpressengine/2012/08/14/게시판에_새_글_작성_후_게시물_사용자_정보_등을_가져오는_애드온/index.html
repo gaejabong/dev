@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>게시판에 새 글 작성 후 게시물, 사용자 정보 등을 가져오는 애드온 &#8211; 프로그래밍 놀이</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="게시물의 작성을 완료하기 전에는 document_srl이 부여되지 않으므로 게시글의 제목이나 내용, 태그, 확장변수 등을 가져오는 것이 쉽지 않았다. 그래서 애드온의 호출시점을 before_module_proc에서 after_module_proc로 바꿀 수 밖에 없었다.">
+    <meta name="author" content="jdssem">
+    <meta name="keywords" content="xpressengine">
+    <link rel="canonical" href="http://localhost:4000/xpressengine/2012/08/14/%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%91%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%A6_%E1%84%89%E1%85%A2_%E1%84%80%E1%85%B3%E1%86%AF_%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%92%E1%85%AE_%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%86%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%8C%E1%85%A1_%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A9_%E1%84%83%E1%85%B3%E1%86%BC%E1%84%8B%E1%85%B3%E1%86%AF_%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%8B%E1%85%A9%E1%84%82%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201502012359" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="게시판에 새 글 작성 후 게시물, 사용자 정보 등을 가져오는 애드온">
+    <meta property="og:description" content="Programming for fun!">
+    <meta property="og:url" content="http://localhost:4000/xpressengine/2012/08/14/%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%91%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%A6_%E1%84%89%E1%85%A2_%E1%84%80%E1%85%B3%E1%86%AF_%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%92%E1%85%AE_%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%86%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%8C%E1%85%A1_%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A9_%E1%84%83%E1%85%B3%E1%86%BC%E1%84%8B%E1%85%B3%E1%86%AF_%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%8B%E1%85%A9%E1%84%82%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB/">
+    <meta property="og:site_name" content="프로그래밍 놀이">
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://localhost:4000" class="site-title">프로그래밍 놀이</a>
+      <nav class="site-nav right">
+        <a href="/about/">About</a>
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  <h1>게시판에 새 글 작성 후 게시물, 사용자 정보 등을 가져오는 애드온</h1>
+  <span class="post-meta">2012년 8월 14일</span><br>
+    
+  <span class="post-meta small">
+  
+    4분 분량
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <p>만들고자 하는 것 : 게시물의 확장변수를 재조합하여 코드화한 후 태그에 강제로 입력하는 애드온</p>
+
+<p>게시물의 작성을 완료하기 전에는 document_srl이 부여되지 않으므로 게시글의 제목이나 내용, 태그, 확장변수 등을 가져오는 것이 쉽지 않았다. 그래서 애드온의 호출시점을 before_module_proc에서 after_module_proc로 바꿀 수 밖에 없었다. 생각에는 이렇게 DB에 update를 한 후 확장변수를 불러와서 다시 한번 tags에 저장을 하는 것 말고는 딱히 방법이 없을 것 같아 sol님께 문의해보았더니 DB에 update를 두 번하는 것이라 비효율적이라서 차라리 트리거를 쓰는 것이 낫겠다는 답변을 얻었다. 그래서 이제는 트리거에 대해 공부를 해야 한다. 트리거로 넘어가기 전에 그동안 공부한 내용을 정리해 보고자 한다.</p>
+
+<h2 id="section">게시물 정보 가져오기</h2>
+
+<h3 id="addonnameaddonphp">addon_name.addon.php</h3>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;__XE__&#39;</span><span class="p">))</span> <span class="k">exit</span><span class="p">();</span>
+
+<span class="c1">// 새 글을 작성해서 저장버튼을 누르고 act가 실행되고 난 직후</span>
+<span class="k">if</span><span class="p">(</span><span class="nx">Context</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;act&#39;</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;procBoardInsertDocument&#39;</span> <span class="o">&amp;</span><span class="nx">amp</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">amp</span><span class="p">;</span> <span class="nv">$called_position</span> <span class="o">==</span> <span class="s1">&#39;after_module_proc&#39;</span> <span class="o">&amp;</span><span class="nx">amp</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">amp</span><span class="p">;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">toBool</span><span class="p">())</span> <span class="p">{</span>
+	<span class="c1">// document_srl을 구함.</span>
+	<span class="nv">$document_srl</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;document_srl&#39;</span><span class="p">);</span>
+	<span class="c1">// comment_srl을 구함.</span>
+	<span class="nv">$comment_srl</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;comment_srl&#39;</span><span class="p">);</span>
+	<span class="c1">// 게시물의 각종 변수에 접근하기 위해 oDocument 객체변수 사용이 필요.</span>
+	<span class="c1">// document 모델을 oDocumentModel에 저장</span>
+	<span class="nv">$oDocumentModel</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">amp</span><span class="p">;</span><span class="nx">getModel</span><span class="p">(</span><span class="s1">&#39;document&#39;</span><span class="p">);</span>
+	<span class="c1">// DocumentModel의 getDocument method를 통해 oDocument 인스턴스 생성(생성을 위해서는 document_srl이 필요함)</span>
+	<span class="nv">$oDocument</span> <span class="o">=</span> <span class="nv">$oDocumentModel</span><span class="o">-&gt;</span><span class="na">getDocument</span><span class="p">(</span><span class="nv">$document_srl</span><span class="p">);</span>
+	<span class="c1">// 제목</span>
+	<span class="nv">$title</span> <span class="o">=</span> <span class="nv">$oDocument</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">);</span>
+	<span class="c1">// 내용(HTML코드가 trim되지 않은 형태)</span>
+	<span class="nv">$content</span> <span class="o">=</span> <span class="nv">$oDocument</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
+	<span class="c1">// 태그(trim되지 않은 원형 그대로)</span>
+	<span class="nv">$tags</span> <span class="o">=</span> <span class="nv">$oDocument</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;tags&#39;</span><span class="p">);</span>
+	<span class="nx">debugPrint</span><span class="p">(</span><span class="s2">&quot;[document_srl] &quot;</span><span class="o">.</span><span class="nv">$document_srl</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[comment_srl] &quot;</span><span class="o">.</span><span class="nv">$comment_srl</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[title] &quot;</span><span class="o">.</span><span class="nv">$title</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[content] &quot;</span><span class="o">.</span><span class="nv">$content</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[tags] &quot;</span><span class="o">.</span><span class="nv">$tags</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span></code></pre></div>
+
+<p>결국 확장변수를 어떻게 불러오는지까지는 알아내지 못했다. Document Model은 Document 클래스를 상속하고 있고 Document Model 클래스의 getDocument 메서드는 새로운 document_item 클래스를 생성한다.</p>
+
+<h2 id="section-1">회원 정보 가져오기</h2>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">// 로그인 중이면 1(TRUE) 아니면 0(FALSE)</span>
+<span class="x">	$is_logged = Context::get(is_logged);</span>
+<span class="x">	//debugPrint($is_logged);</span>
+<span class="x">	// 사용자의 로그인 정보에 접근 logged_info는 배열형태로 저장 됨.</span>
+<span class="x">	$logged_info = Context::get(logged_info);</span>
+<span class="x">	// logged_info에서 사용자 아이디(user_id)를 가져옴.</span>
+<span class="x">	debugPrint(&quot;userid : &quot;.$logged_info-&gt;user_id);</span></code></pre></div>
+
+<p>회원 정보(logged_info)에는 다음과 같은 내용들이 저장된다.</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">stdClass Object (</span>
+<span class="x">	[member_srl] =&gt;	4	// $logged_info-&gt;member_srl 회원 고유번호</span>
+<span class="x">	[user_id] =&gt;		// $logged_info-&gt;user_id 아이디</span>
+<span class="x">	[email_address] =&gt;	// $logged_info-&gt;email_address 이메일 주소</span>
+<span class="x">	[password] =&gt;		// $logged_info-&gt;password 비밀번호</span>
+<span class="x">	[email_id] =&gt;		// $logged_info-&gt;email_id 이메일 아이디</span>
+<span class="x">	[email_host] =&gt;		// $logged_info-&gt;email_host 이메일 호스트</span>
+<span class="x">	[user_name] =&gt;		// $logged_info-&gt;user_name 이름</span>
+<span class="x">	[nick_name] =&gt;		// $logged_info-&gt;nick_name 닉네임</span>
+<span class="x">	[find_account_question] =&gt; 0 XE 공홈에서 사용하는 듯...질문찾기?</span>
+<span class="x">	[find_account_answer] =&gt;  XE 공홈에서 사용하는 듯...답변찾기?</span>
+<span class="x">	[homepage] =&gt;		// $logged_info-&gt;homepage 홈페이지</span>
+<span class="x">	[blog] =&gt;			//$logged_info-&gt;blog 블로그</span>
+<span class="x">	[birthday] =&gt;		// $logged_info-&gt;birthday 생년월일 (YYYYMMDD)</span>
+<span class="x">	[allow_mailing] =&gt; N	// $logged_info-&gt;allow_mailing 메일링 가입</span>
+<span class="x">	[allow_message] =&gt; Y	// $logged_info-&gt;allow_message 쪽지 수신 허용</span>
+<span class="x">	[denied] =&gt; N		// $logged_info-&gt;denied 사용중지</span>
+<span class="x">	[limit_date] =&gt;		// $logged_info-&gt;limit_date 제한일</span>
+<span class="x">	[regdate] =&gt;		// $logged_info-&gt;regdate 회원가입일자</span>
+<span class="x">	[last_login] =&gt;		// $logged_info-&gt;last_login 최종 로그인 일자</span>
+<span class="x">	[change_password_date] =&gt;	// $logged_info-&gt;change_password_date 비밀번호 변경일자</span>
+<span class="x">	[is_admin] =&gt; Y		 // $logged_info-&gt;is_admin 관리자 확인</span>
+<span class="x">	[description] =&gt;		// $logged_info-&gt;description 설명</span>
+<span class="x">	[list_order] =&gt; 		// $logged_info-&gt;list_order ???</span>
+<span class="x">	[profile_image] =&gt;	// $logged_info-&gt;profile_image 프로필 이미지</span>
+<span class="x">	[image_name] =&gt;	// $logged_info-&gt;image_name 이름 이미지 경로</span>
+<span class="x">	[image_mark] =&gt;		// $logged_info-&gt;image_mark 그룹 이미지 경로</span>
+<span class="x">	[signature] =&gt;		// $logged_info-&gt;signature 서명</span>
+<span class="x">	[group_list] =&gt; Array ( [1] =&gt; 준회원 )  // $logged_info-&gt;group_list 소속 그룹 목록</span>
+<span class="x">	[is_openid] =&gt;		// $logged_info-&gt;is_openid 오픈아이디</span>
+<span class="x">	[menu_list] =&gt; Array (</span>
+<span class="x">		[dispMemberInfo] =&gt; 회원 정보 보기</span>
+<span class="x">		[dispMemberScrappedDocument] =&gt; 스크랩 보기</span>
+<span class="x">		[dispMemberSavedDocument] =&gt; 저장함 보기</span>
+<span class="x">		[dispMemberOwnDocument] =&gt; 작성 글 보기</span>
+<span class="x">		[dispCommunicationFriend] =&gt; 친구 보기</span>
+<span class="x">		[dispCommunicationMessages] =&gt; 쪽지함 보기</span>
+<span class="x">		)</span>
+<span class="x">	[is_site_admin] =&gt;	// $logged_info-&gt;is_site_admin 가상 사이트 관리자 확인</span>
+<span class="x">)</span></code></pre></div>
+
+<h2 id="section-2">참고</h2>
+
+<ul>
+  <li>Context의 이해 <a href="http://www.xeschool.com/xe/xenote_understanding_of_context">http://www.xeschool.com/xe/xenote_understanding_of_context</a></li>
+  <li>유용한 변수 logged_info <a href="http://www.xeschool.com/xe/xenote_useful_variable_logged_info">http://www.xeschool.com/xe/xenote_useful_variable_logged_info</a></li>
+</ul>
+
+</article>
+
+
+
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname  = 'hangoutwithprogramming';
+    var disqus_identifier = '/xpressengine/2012/08/14/게시판에_새_글_작성_후_게시물_사용자_정보_등을_가져오는_애드온';
+    var disqus_title      = '';
+
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+        © dev.jdssem.com
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>

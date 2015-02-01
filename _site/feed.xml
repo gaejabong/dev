@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>프로그래밍 놀이</title>
+    <description>Programming for fun!</description>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>@property의 속성 지정</title>
+        <description>&lt;p&gt;@property에는 크게 4종류의 옵션이 지정가능하다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;메서드명(getter, setter)&lt;/li&gt;
+  &lt;li&gt;읽기/쓰기 속성(readonly, readwrite)&lt;/li&gt;
+  &lt;li&gt;값 설정 방법(assign, retain, unsafe_unretained, strong, weak, copy)&lt;/li&gt;
+  &lt;li&gt;메모리 관리 속성(nonatomic)
+ ARC 메모리 관리와 관련된 내용은 다음 사이트 참고.
+ &lt;a href=&quot;http://soooprmx.com/wp/archives/4174&quot;&gt;http://soooprmx.com/wp/archives/4174&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;이 글을 쓰는 이유는 인디스쿨 앱을 실행할 때 메모리 누수가 발생하기 때문이다. 원인이 무엇인지는 조금 더 파악해봐야 알겠지만 property 설정을 제대로 해주지 않았거나 값을 불러오거나 저장할 때 getter나 setter를 사용하지 않은 부분이 있기 때문일 가능성이 크다.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+</description>
+        <pubDate>Thu, 08 May 2014 22:06:04 +0900</pubDate>
+        <link>http://localhost:4000/objective-c/2014/05/08/property%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%8C%E1%85%B5%E1%84%8C%E1%85%A5%E1%86%BC/</link>
+        <guid isPermaLink="true">http://localhost:4000/objective-c/2014/05/08/property%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%8C%E1%85%B5%E1%84%8C%E1%85%A5%E1%86%BC/</guid>
+      </item>
+    
+      <item>
+        <title>NSURLSession 클래스를 활용해 XE 로그인하기</title>
+        <description>&lt;p&gt;인디스쿨 앱의 핵심적인 기능 중 한 가지는 바로 게시물의 내용을 가져오는 것이다. XE에서는 API를 통해 JSON 형태로 데이터를 가지고 올 수 있다고 하니 일단 iOS쪽에서 URL Request를 보내는 것에 대한 공부가 필요했다. 이와 관련해서 참고할 수 있는 애플 개발자 문서가 있었다. 바로 &lt;a href=&quot;https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/URLLoadingSystem/URLLoadingSystem.html#//apple_ref/doc/uid/10000165-BCICJDHA&quot;&gt;URL Loading System Programming Guide&lt;/a&gt;이다.
+이 문서에 따르면 iOS 7.0 이상과 OS X v10.9 이상에서는 NSURLSession이라는 클래스를 사용하면 가능하다고 한다. 그 이전 버전에서 작동하게 하려면 NSURLConnection 클래스를 사용해야 한다고 하는데 일단 이건 패스하기로 했다.
+같은 문서의 &lt;a href=&quot;https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/URLLoadingSystem/NSURLSessionConcepts/NSURLSessionConcepts.html#//apple_ref/doc/uid/10000165i-CH2-SW1&quot;&gt;Life Cycle of a URL Session&lt;/a&gt;이라는 섹션을 보면 URL Session이 어떤 순서에 의해 기본적으로 동작하는지를 이해할 수 있다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create a session configuration. For background sessions, this configuration must contain a unique identifier. Store that identifier, and use it to reassociate with the session if your app crashes or is terminated or suspended.&lt;/li&gt;
+  &lt;li&gt;Create a session, specifying a configuration object and a &lt;code&gt;nil&lt;/code&gt; delegate.&lt;/li&gt;
+  &lt;li&gt;Create task objects within a session that each represent a resource request.Each task starts out in a suspended state. After your app calls &lt;code&gt;resume&lt;/code&gt; on the task, it begins downloading the specified resource.
+The task objects are subclasses of &lt;code&gt;NSURLSessionTask&lt;/code&gt;–&lt;code&gt;NSURLSessionDataTask&lt;/code&gt;, &lt;code&gt;NSURLSessionUploadTask&lt;/code&gt;, or &lt;code&gt;NSURLSessionDownloadTask&lt;/code&gt;, depending on the behavior you are trying to achieve. These objects are analogous to &lt;code&gt;NSURLConnection&lt;/code&gt; objects, but give you more control and a unified delegate model.
+Although your app can (and typically should) add more than one task to a session, for simplicity, the remaining steps describe the life cycle in terms of a single task.&lt;/li&gt;
+  &lt;li&gt;For a download task, during the transfer from the server, if the user tells your app to pause the download, cancel the task by calling&lt;code&gt;cancelByProducingResumeData:&lt;/code&gt; method. Later, pass the returned resume data to either the &lt;code&gt;downloadTaskWithResumeData:&lt;/code&gt; or&lt;code&gt;downloadTaskWithResumeData:completionHandler:&lt;/code&gt; method to create a new download task that continues the download.&lt;/li&gt;
+  &lt;li&gt;When a task completes, the &lt;code&gt;NSURLSession&lt;/code&gt; object calls the task’s completion handler.&lt;/li&gt;
+  &lt;li&gt;When your app no longer needs a session, invalidate it by calling either &lt;code&gt;invalidateAndCancel&lt;/code&gt; (to cancel outstanding tasks) or &lt;code&gt;finishTasksAndInvalidate&lt;/code&gt; (to allow outstanding tasks to finish before invalidating the object).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;인터넷에서 예제 자료를 구하려고 검색을 많이 했었는데 iOS의 메모리 관리 체계가 바뀌기 전의 자료들이 있어서 호환이 되지 않는 경우도 많았다. 여러번의 검색을 통해 대략적으로 파악해서 다음과 같이 소스코드를 제작했다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// 세션의 종류 설정&lt;/span&gt;
+&lt;span class=&quot;bp&quot;&gt;NSURLSessionConfiguration&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defaultConfigObject&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSURLSessionConfiguration&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defaultSessionConfiguration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 세션 생성&lt;/span&gt;
+&lt;span class=&quot;bp&quot;&gt;NSURLSession&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defaultSession&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSURLSession&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;sessionWithConfiguration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defaultConfigObject&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;delegate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;delegateQueue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSOperationQueue&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainQueue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
+&lt;span class=&quot;bp&quot;&gt;NSURL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loginUrl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSURL&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;URLWithString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;http://site/?act=procMemberLogin&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;bp&quot;&gt;NSMutableURLRequest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loginRequest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSMutableURLRequest&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;requestWithURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loginUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;bp&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;params&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;user_id=아이디&amp;amp;amp;password=비밀번호&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loginRequest&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setHTTPMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;POST&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;br&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loginRequest&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setHTTPBody&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;params&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;dataUsingEncoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSUTF8StringEncoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
+&lt;span class=&quot;bp&quot;&gt;NSURLSessionDataTask&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dataTask&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defaultSession&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;dataTaskWithRequest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loginRequest&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;completionHandler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;NSURLResponse&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;NSError&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// response body출력을 위한 nsdata -&amp;gt; nsstring 변환&lt;/span&gt;
+&lt;span class=&quot;bp&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;initWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;encoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSUTF8StringEncoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 헤더출력&amp;lt;br /&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;NSLog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;%@&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;br&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// response&amp;lt;br /&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;NSLog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;%@&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dataTask&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;resume&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;로그인에 성공하든 성공하지 않든 클라이언트에서 해당 URL에 접속하는 데 문제만 없다면 HTTP 헤더는 status code 200을 보내게 된다. 다만 한 가지 발견한 것이 있다면 로그인에 성공했을 경우에는 다음과 같이 로그인에 성공했을 경우 이동하는 URL이 출력된다. (아래의 경우에는 http://site/home)&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;NSHTTPURLResponse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10929b630&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;URL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;//site/home }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;반면 로그인에 실패했을 경우에는 로그인을 처리하는 URL이 그대로 출력되는 것을 확인할 수 있었다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;NSHTTPURLResponse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10929b630&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;URL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;//site/?act=procMemberLogin }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;현재는 로그인을 위해 xe에 직접 POST로 아이디와 비밀번호는 전송하고 xe/modules/member.controller.php가 처리하는 형태라 보안상으로도 좋지 않기 때문에 추후에는 xe에서 자체 모듈을 개발할 필요가 있어 보인다.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 02 Apr 2014 12:00:05 +0900</pubDate>
+        <link>http://localhost:4000/xpressengine/2014/04/02/NSURLSession_%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A2%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%92%E1%85%AA%E1%86%AF%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2_XE_%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://localhost:4000/xpressengine/2014/04/02/NSURLSession_%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A2%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%92%E1%85%AA%E1%86%AF%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2_XE_%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+      </item>
+    
+      <item>
+        <title>iOS 프로그래밍 시작하기</title>
+        <description>&lt;p&gt;예전에 써둔 &lt;a href=&quot;/잡담/2013/06/09/새로운_도전&quot;&gt;새로운 도전&lt;/a&gt;이라는 글을 보니 인디스쿨 앱을 만들겠다고 했던 때가 2013년 6월이다. 이미 그 시기 이전에 앱개발 계획을 세웠으니 실상 1년도 더 된 프로젝트인데, 이번에는 정말 제대로 시작하게 되었다.&lt;/p&gt;
+
+&lt;p&gt;시작하게 된 이유는 다소 어이가 없게도 클래스팅 앱의 Push 알람이 오지 않는다는 사실 때문이었다(지극히 개인적으로만 발생하는 문제이므로 클래스팅과는 아무런 관련이 없음을 밝혀둔다). 언젠가부터 이런 문제가 발생해서 해결하려고 많은 노력을 했었는데 별다른 성과가 없었다. 그래서 답답한 마음에 직접 xcode를 다시 설치하고 Organizer로 Device Console을 살펴보다가 xcode 깐 김에 다시 앱개발이나 해보자!! 라는 마음을 먹게되었으니, 클래스팅에 감사해야 하는 것인지 ㅎ&lt;/p&gt;
+
+&lt;p&gt;xcode는 물론이고 Objective-C에 대해서도 아는 것이 많이 없기 때문에 또다시 맨땅에 헤딩으로 시작할 수 밖에 없다. 그래서 첫 번째로 살펴본 것은 Apple에서 작성한 &lt;a href=&quot;https://developer.apple.com/library/iOS/referencelibrary/GettingStarted/RoadMapiOS/index.html&quot;&gt;Start Developing iOS Apps Today&lt;/a&gt; 문서이다. 예전에도 이런 비슷한 문서가 있었는데 지금은 제법 상세하고도 친절하게 안내를 해주는 것 같다. 물론 iOS7 환경에 맞게 모든 문서가 작성되어 있어서 시중에 있는 어떤 책보다도 앱개발에 대한 기초를 쌓는 데 많은 도움이 되었다.&lt;/p&gt;
+
+&lt;p&gt;이 문서에 나와있는 튜토리얼을 따라하다보면 기본적인 앱의 개발 과정, 스토리보드의 사용 방법, MVC에 기초한 프로그래밍에 대해 대략적으로 이해할 수 있게 된다. 문제는 개발하려는 앱이 xe와 연동이 되어야 하다보니 xe에 대한 이해도 필요하다는 점이다. 하지만 xe의 경우에는 개발자를 위한 문서가 전무한 상태라 조금은 걱정이 된다.&lt;/p&gt;
+
+&lt;p&gt;하지만 블로그의 부제가 programming for fun이다. 프로그래밍은 내 본업이 아니지만 나에게는 둘도 없는 취미이자 관심사이고 자아실현의 도구이기도 하다. 내가 필요한 프로그램을 만들어 쓰는 것 자체가 나에게는 굉장히 흥미로운 일이니, 이 모든 과정은 나의 ‘놀이’라고 볼 수 밖에 없다. 다만 놀 때는 놀더라도 새롭게 알게 된 내용에 대해서는 차근차근 정리를 해가면서 놀려고 한다.&lt;/p&gt;
+
+&lt;p&gt;다음 과제는 iOS에서 xe에 로그인하기와 JSON으로 정보 가져오기다. 이 글을 쓰는 시점에는 이미 성공한 내용인데 곧 정리를 해야겠다. 앞으로 계속 치고 나가고 싶지만 꾹꾹 참고 블로그에 정리를 한다. 앞으로 많이 기대해 주시라.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 31 Mar 2014 13:56:26 +0900</pubDate>
+        <link>http://localhost:4000/%EC%9E%A1%EB%8B%B4/2014/03/31/iOS_%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%89%E1%85%B5%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://localhost:4000/%EC%9E%A1%EB%8B%B4/2014/03/31/iOS_%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%89%E1%85%B5%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+      </item>
+    
+      <item>
+        <title>새로운 도전</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/images/2013-06-09/indischoolapp.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;예전에 &lt;a href=&quot;http://skyfac.tistory.com/category/%EA%B0%9C%EB%B0%9C/%EB%AF%B8%ED%88%AC%EB%8D%B0%EC%9D%B4%EC%97%85%EB%A1%9C%EB%8D%94&quot;&gt;미투데이 업로더&lt;/a&gt;를 만들었을 때도 그랬지만 ‘이걸 만들고 싶다.’라는 생각이 들었을 때 나는 모든 걸 바닥부터 시작해야만 했다. 프로그래밍 언어도 생소하고(물론 해당 언어가 생소하다는 의미다) openAPI며 모르는 것들 투성이였기 때문이다. iOS 프로그래밍도 그러하다. 하지만 무엇보다 재미있을 것 같다. 프로그래밍 공부를 하는 가장 좋은 방법은 내가 필요한 것을 직접 만들어가며 배우는 것이다. 기초부터 차근차근 하는 것도 좋지만 나는 내 방법을 더 선호한다. 그래서 또 새로운 도전을 시작한다. 기능은 간단하다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;게시판을 편리하게 볼 수 있는 것&lt;/li&gt;
+  &lt;li&gt;알림센터와 연동하는 것&lt;/li&gt;
+  &lt;li&gt;게시물 스크랩을 편리하게 할 수 있는 것&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;일단 생각한 기능은 이정도이다.&lt;/p&gt;
+
+&lt;p&gt;그럼, 새로운 도전을 위하여. World is the will to power—and nothing besides!&lt;/p&gt;
+</description>
+        <pubDate>Sun, 09 Jun 2013 12:05:25 +0900</pubDate>
+        <link>http://localhost:4000/%EC%9E%A1%EB%8B%B4/2013/06/09/%E1%84%89%E1%85%A2%E1%84%85%E1%85%A9%E1%84%8B%E1%85%AE%E1%86%AB_%E1%84%83%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB/</link>
+        <guid isPermaLink="true">http://localhost:4000/%EC%9E%A1%EB%8B%B4/2013/06/09/%E1%84%89%E1%85%A2%E1%84%85%E1%85%A9%E1%84%8B%E1%85%AE%E1%86%AB_%E1%84%83%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB/</guid>
+      </item>
+    
+      <item>
+        <title>Context::set()으로 태그 강제 입력하기</title>
+        <description>&lt;p&gt;글 작성시에 애드온을 호출하고 &lt;code&gt;Context::set(&#39;tags&#39;, $value)&lt;/code&gt;를 실행해도 애초에 태그 필드가 비어있으면 값이 저장되지 않는다. Context.Class.php 파일을 분석하니 set() 함수가 다음과 같이 정의되어 있었다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;x&quot;&gt;**&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt; * @brief set a context value with a key&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt; **&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;function set($key, $val, $set_to_get_vars=0) {&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	is_a($this,&amp;#39;Context&amp;#39;)?$self=&amp;amp;amp;$this:$self=&amp;amp;amp;Context::getInstance();&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	$self-&amp;gt;context-&amp;gt;{$key} = $val;&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	if($set_to_get_vars === false) return;&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	if($val === NULL || $val === &amp;#39;&amp;#39;)&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	{&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;		unset($self-&amp;gt;get_vars-&amp;gt;{$key});&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;		return;&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	}&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	if($set_to_get_vars || $self-&amp;gt;get_vars-&amp;gt;{$key}) $self-&amp;gt;get_vars-&amp;gt;{$key} = $val;&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;코드를 보면 $set_to_get_vars를 1로 설정해 주면 $self-&amp;gt;get_vars를 통해 $val 값을 초기화하는 것을 알 수 있다. 따라서 다음과 같이 메서드를 호출하면 된다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;x&quot;&gt;Context::set(&amp;#39;tags&amp;#39;,$val, 1);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Tue, 14 Aug 2012 18:00:07 +0900</pubDate>
+        <link>http://localhost:4000/xpressengine/2012/08/14/Contextset()%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9_%E1%84%90%E1%85%A2%E1%84%80%E1%85%B3_%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%A6_%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://localhost:4000/xpressengine/2012/08/14/Contextset()%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9_%E1%84%90%E1%85%A2%E1%84%80%E1%85%B3_%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%A6_%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+      </item>
+    
+      <item>
+        <title>게시판에 새 글 작성 후 게시물, 사용자 정보 등을 가져오는 애드온</title>
+        <description>&lt;p&gt;만들고자 하는 것 : 게시물의 확장변수를 재조합하여 코드화한 후 태그에 강제로 입력하는 애드온&lt;/p&gt;
+
+&lt;p&gt;게시물의 작성을 완료하기 전에는 document_srl이 부여되지 않으므로 게시글의 제목이나 내용, 태그, 확장변수 등을 가져오는 것이 쉽지 않았다. 그래서 애드온의 호출시점을 before_module_proc에서 after_module_proc로 바꿀 수 밖에 없었다. 생각에는 이렇게 DB에 update를 한 후 확장변수를 불러와서 다시 한번 tags에 저장을 하는 것 말고는 딱히 방법이 없을 것 같아 sol님께 문의해보았더니 DB에 update를 두 번하는 것이라 비효율적이라서 차라리 트리거를 쓰는 것이 낫겠다는 답변을 얻었다. 그래서 이제는 트리거에 대해 공부를 해야 한다. 트리거로 넘어가기 전에 그동안 공부한 내용을 정리해 보고자 한다.&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;게시물 정보 가져오기&lt;/h2&gt;
+
+&lt;h3 id=&quot;addonnameaddonphp&quot;&gt;addon_name.addon.php&lt;/h3&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;defined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__XE__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 새 글을 작성해서 저장버튼을 누르고 act가 실행되고 난 직후&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;act&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;procBoardInsertDocument&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$called_position&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;after_module_proc&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toBool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;// document_srl을 구함.&lt;/span&gt;
+	&lt;span class=&quot;nv&quot;&gt;$document_srl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;document_srl&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;// comment_srl을 구함.&lt;/span&gt;
+	&lt;span class=&quot;nv&quot;&gt;$comment_srl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;comment_srl&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;// 게시물의 각종 변수에 접근하기 위해 oDocument 객체변수 사용이 필요.&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;// document 모델을 oDocumentModel에 저장&lt;/span&gt;
+	&lt;span class=&quot;nv&quot;&gt;$oDocumentModel&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;document&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;// DocumentModel의 getDocument method를 통해 oDocument 인스턴스 생성(생성을 위해서는 document_srl이 필요함)&lt;/span&gt;
+	&lt;span class=&quot;nv&quot;&gt;$oDocument&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$oDocumentModel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getDocument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$document_srl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;// 제목&lt;/span&gt;
+	&lt;span class=&quot;nv&quot;&gt;$title&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$oDocument&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;title&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;// 내용(HTML코드가 trim되지 않은 형태)&lt;/span&gt;
+	&lt;span class=&quot;nv&quot;&gt;$content&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$oDocument&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;content&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;// 태그(trim되지 않은 원형 그대로)&lt;/span&gt;
+	&lt;span class=&quot;nv&quot;&gt;$tags&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$oDocument&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;tags&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;nx&quot;&gt;debugPrint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;[document_srl] &amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$document_srl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;[comment_srl] &amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$comment_srl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;[title] &amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;[content] &amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$content&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;[tags] &amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$tags&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;?&amp;gt;&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;결국 확장변수를 어떻게 불러오는지까지는 알아내지 못했다. Document Model은 Document 클래스를 상속하고 있고 Document Model 클래스의 getDocument 메서드는 새로운 document_item 클래스를 생성한다.&lt;/p&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;회원 정보 가져오기&lt;/h2&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;x&quot;&gt;// 로그인 중이면 1(TRUE) 아니면 0(FALSE)&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	$is_logged = Context::get(is_logged);&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	//debugPrint($is_logged);&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	// 사용자의 로그인 정보에 접근 logged_info는 배열형태로 저장 됨.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	$logged_info = Context::get(logged_info);&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	// logged_info에서 사용자 아이디(user_id)를 가져옴.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	debugPrint(&amp;quot;userid : &amp;quot;.$logged_info-&amp;gt;user_id);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;회원 정보(logged_info)에는 다음과 같은 내용들이 저장된다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;x&quot;&gt;stdClass Object (&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[member_srl] =&amp;gt;	4	// $logged_info-&amp;gt;member_srl 회원 고유번호&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[user_id] =&amp;gt;		// $logged_info-&amp;gt;user_id 아이디&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[email_address] =&amp;gt;	// $logged_info-&amp;gt;email_address 이메일 주소&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[password] =&amp;gt;		// $logged_info-&amp;gt;password 비밀번호&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[email_id] =&amp;gt;		// $logged_info-&amp;gt;email_id 이메일 아이디&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[email_host] =&amp;gt;		// $logged_info-&amp;gt;email_host 이메일 호스트&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[user_name] =&amp;gt;		// $logged_info-&amp;gt;user_name 이름&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[nick_name] =&amp;gt;		// $logged_info-&amp;gt;nick_name 닉네임&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[find_account_question] =&amp;gt; 0 XE 공홈에서 사용하는 듯...질문찾기?&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[find_account_answer] =&amp;gt;  XE 공홈에서 사용하는 듯...답변찾기?&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[homepage] =&amp;gt;		// $logged_info-&amp;gt;homepage 홈페이지&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[blog] =&amp;gt;			//$logged_info-&amp;gt;blog 블로그&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[birthday] =&amp;gt;		// $logged_info-&amp;gt;birthday 생년월일 (YYYYMMDD)&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[allow_mailing] =&amp;gt; N	// $logged_info-&amp;gt;allow_mailing 메일링 가입&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[allow_message] =&amp;gt; Y	// $logged_info-&amp;gt;allow_message 쪽지 수신 허용&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[denied] =&amp;gt; N		// $logged_info-&amp;gt;denied 사용중지&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[limit_date] =&amp;gt;		// $logged_info-&amp;gt;limit_date 제한일&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[regdate] =&amp;gt;		// $logged_info-&amp;gt;regdate 회원가입일자&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[last_login] =&amp;gt;		// $logged_info-&amp;gt;last_login 최종 로그인 일자&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[change_password_date] =&amp;gt;	// $logged_info-&amp;gt;change_password_date 비밀번호 변경일자&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[is_admin] =&amp;gt; Y		 // $logged_info-&amp;gt;is_admin 관리자 확인&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[description] =&amp;gt;		// $logged_info-&amp;gt;description 설명&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[list_order] =&amp;gt; 		// $logged_info-&amp;gt;list_order ???&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[profile_image] =&amp;gt;	// $logged_info-&amp;gt;profile_image 프로필 이미지&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[image_name] =&amp;gt;	// $logged_info-&amp;gt;image_name 이름 이미지 경로&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[image_mark] =&amp;gt;		// $logged_info-&amp;gt;image_mark 그룹 이미지 경로&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[signature] =&amp;gt;		// $logged_info-&amp;gt;signature 서명&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[group_list] =&amp;gt; Array ( [1] =&amp;gt; 준회원 )  // $logged_info-&amp;gt;group_list 소속 그룹 목록&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[is_openid] =&amp;gt;		// $logged_info-&amp;gt;is_openid 오픈아이디&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[menu_list] =&amp;gt; Array (&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;		[dispMemberInfo] =&amp;gt; 회원 정보 보기&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;		[dispMemberScrappedDocument] =&amp;gt; 스크랩 보기&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;		[dispMemberSavedDocument] =&amp;gt; 저장함 보기&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;		[dispMemberOwnDocument] =&amp;gt; 작성 글 보기&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;		[dispCommunicationFriend] =&amp;gt; 친구 보기&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;		[dispCommunicationMessages] =&amp;gt; 쪽지함 보기&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;		)&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;	[is_site_admin] =&amp;gt;	// $logged_info-&amp;gt;is_site_admin 가상 사이트 관리자 확인&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;참고&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Context의 이해 &lt;a href=&quot;http://www.xeschool.com/xe/xenote_understanding_of_context&quot;&gt;http://www.xeschool.com/xe/xenote_understanding_of_context&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;유용한 변수 logged_info &lt;a href=&quot;http://www.xeschool.com/xe/xenote_useful_variable_logged_info&quot;&gt;http://www.xeschool.com/xe/xenote_useful_variable_logged_info&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Tue, 14 Aug 2012 16:23:44 +0900</pubDate>
+        <link>http://localhost:4000/xpressengine/2012/08/14/%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%91%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%A6_%E1%84%89%E1%85%A2_%E1%84%80%E1%85%B3%E1%86%AF_%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%92%E1%85%AE_%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%86%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%8C%E1%85%A1_%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A9_%E1%84%83%E1%85%B3%E1%86%BC%E1%84%8B%E1%85%B3%E1%86%AF_%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%8B%E1%85%A9%E1%84%82%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB/</link>
+        <guid isPermaLink="true">http://localhost:4000/xpressengine/2012/08/14/%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%91%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%A6_%E1%84%89%E1%85%A2_%E1%84%80%E1%85%B3%E1%86%AF_%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%92%E1%85%AE_%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%86%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%8C%E1%85%A1_%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A9_%E1%84%83%E1%85%B3%E1%86%BC%E1%84%8B%E1%85%B3%E1%86%AF_%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%8B%E1%85%A9%E1%84%82%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB/</guid>
+      </item>
+    
+      <item>
+        <title>애드온에서 document_srl 구하기</title>
+        <description>&lt;p&gt;애드온에서 document_srl을 구하기 위해서는 호출 시점이 글이 작성되고 난 직후인 ‘after_module_proc’이어야 한다. before_module_proc인 경우 action이 실행되지 않았으므로 document_srl 자체가 존재하지 않는다.&lt;/p&gt;
+
+&lt;h3 id=&quot;addonsaddonnameaddonnameaddonphp&quot;&gt;addons/addon_name/addon_name.addon.php&lt;/h3&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;defined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__XE__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 새 글을 작성해서 저장버튼을 누르고 act가 실행된 직후&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;act&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;procBoardInsertDocument&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$called_position&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;after_module_proc&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toBool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;nv&quot;&gt;$document_srl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;document_srl&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;//아래와 같은 방법으로도 document_srl을 구할 수 있다.&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;//$var = $this-&amp;gt;variables;&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;//$document_srl = $var[document_srl];&lt;/span&gt;
+	&lt;span class=&quot;nx&quot;&gt;debugPrint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;[새글 작성 직후] 문서 번호 : &amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$document_srl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;?&amp;gt;&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Tue, 14 Aug 2012 09:46:23 +0900</pubDate>
+        <link>http://localhost:4000/xpressengine/2012/08/14/%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5_document_srl_%E1%84%80%E1%85%AE%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://localhost:4000/xpressengine/2012/08/14/%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5_document_srl_%E1%84%80%E1%85%AE%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+      </item>
+    
+      <item>
+        <title>xe 디버깅하기</title>
+        <description>&lt;p&gt;사용자 설정 파일 config/config.user.inc.php 를 작성해 놓으면 config/config.inc.php 파일의 설정보다 우선해서 적용되어 디버깅이 가능하다.&lt;/p&gt;
+
+&lt;h3 id=&quot;configuserincphp-&quot;&gt;config.user.inc.php 예시&lt;/h3&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__DEBUG__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__DEBUG_OUTPUT__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__DEBUG_PROTECT__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__DEBUG_PROTECT_IP__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;127.0.0.1&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__DEBUG_DB_OUTPUT__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__LOG_SLOW_QUERY__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__OB_GZHANDLER_ENABLE__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;__ENABLE_PHPUNIT_TEST__&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;?&amp;gt;&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;configuserincphp--1&quot;&gt;config.user.inc.php 설정&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;__DEBUG__&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;기본값은 0 으로, 이것은 디버깅 메시지 출력을 할 것인지, 어떤 것을 할 것인지를 설정하는 지시자이다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;0 : 디버그 메시지를 생성/ 출력하지 않음&lt;/li&gt;
+  &lt;li&gt;1 : debugPrint() 함수를 통한 메시지 출력&lt;/li&gt;
+  &lt;li&gt;2 : 소요시간, Request/Response info 출력&lt;/li&gt;
+  &lt;li&gt;4 : DB 쿼리 내역 출력&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;이 지시자의 설정값은 비트 OR 연산으로 값을 설정한다. 예를 들어, 모든 설정을 활성시키고자 한다면 7로 설정하면 된다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;__DEBUG_OUTPUT__&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;기본값은 0 으로, 이것은 디버그 메시지의 출력 방법에 대해 설정하는 지시자이다.&lt;/p&gt;
+
+&lt;p&gt;0 : files/_debug_message.php 에 연결하여 출력
+1 : HTML 최하단에 주석으로 출력 (Response Method가 HTML 일 때)
+2 : Firebug 콘솔에 출력 &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;__DEBUG_PROTECT__&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;기본값은 1 이고  디버깅 메시지를 특정 IP 주소에서만 보여줄 것인지 모든 아이피에서 볼 수 있게 할 것인지를 설정한다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;0 : 제한 없음 (권장하지 않음)&lt;/li&gt;
+  &lt;li&gt;1 : 지정한 IP 주소에만 허용&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;가급적 1 로 설정하는 것이 좋을 것이다. 그렇지 않은 경우 이로 인해 발생할 수도 있는 문제는 심각해질 수도 있다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;__DEBUG_PROTECT_IP__&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;기본값은 127.0.0.1 이고, 이 지시자는 &lt;strong&gt;DEBUG_PROTECT&lt;/strong&gt; 지시자의 값을 1로 설정했을 때 디버그 메시지 출력을 허용할 IP 주소를 설정하는 것이다. 여기에는 자신의 IP 주소를 설정해주면 된다.&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;디버깅 메시지 출력&lt;/h3&gt;
+&lt;p&gt;소스코드에 다음과 같이 debugPrint함수를 추가하면 된다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;x&quot;&gt;debugPrint(&amp;quot;Hi, there!!&amp;quot;);&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;debugPrint(&amp;quot;document_srl is : &amp;quot;.$document_srl);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;추천 디버깅 방법&lt;/h3&gt;
+
+&lt;p&gt;FirePHP 등은 속도가 느리므로 사용을 추천하지 않는다.
+디버깅 결과를  파일로 저장하도록 ‘&lt;strong&gt;DEBUG_OUTPUT&lt;/strong&gt;‘을 0으로 설정하고 터미널에서 &lt;code&gt;tail -f files/_debug_message.php&lt;/code&gt; 명령어를 실행하거나
+소스코드에 &lt;code&gt;return new Object(-1, &quot;message&quot;);&lt;/code&gt; 를 추가한다. 단, 이 방법은 게시물이나 댓글을 작성하는 시점(Context::get(‘act’)==’procBoardInsertDocument’ &amp;amp;&amp;amp; $called_position == ‘before_module_proc’) 등에서는 표시되지 않는다.&lt;/p&gt;
+
+&lt;h3 id=&quot;section-2&quot;&gt;참고자료&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Xpress Engine 디버깅 이용하기 &lt;a href=&quot;http://www.nickspace.cn/xe/s2/339&quot;&gt;http://www.nickspace.cn/xe/s2/339&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;XE 개발, Firebug + FirePHP로 디버그하기 &lt;a href=&quot;http://xinics.tistory.com/73&quot;&gt;http://xinics.tistory.com/73&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Firebug와 FirePHP를 통한 XpressEngine의 디버깅 &lt;a href=&quot;http://www.xpressengine.com/index.php?mid=tip&amp;amp;search_target=tag&amp;amp;search_keyword=php&amp;amp;page=1&amp;amp;document_srl=17899854&quot;&gt;http://www.xpressengine.com/index.php?mid=tip&amp;amp;search_target=tag&amp;amp;search_keyword=php&amp;amp;page=1&amp;amp;document_srl=17899854&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Tue, 14 Aug 2012 09:13:36 +0900</pubDate>
+        <link>http://localhost:4000/xpressengine/2012/08/14/xe_%E1%84%83%E1%85%B5%E1%84%87%E1%85%A5%E1%84%80%E1%85%B5%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://localhost:4000/xpressengine/2012/08/14/xe_%E1%84%83%E1%85%B5%E1%84%87%E1%85%A5%E1%84%80%E1%85%B5%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+      </item>
+    
+      <item>
+        <title>NSTimer, NSDate를 이용해서 간단한 타이머(StopWatch)만들기</title>
+        <description>&lt;p&gt;&lt;a href=&quot;http://xrath.com/2012/05/time-management-based-on-stack&quot;&gt;스택 기반 타이머&lt;/a&gt;를 만들기 위해서는 먼저 기본적인 타이머를 구현해 보는 것이 필요했다. 아직 iOS에서 Hello World도 겨우 구현하는 내가 타이머를 쉽게 만들 수는 없는 일이었다. 구글링을 하다보니 iOS5의 환경에 맞지는 않지만 그래도 충분히 참고할 수 있는 글을 하나 발견했다. 바로 &lt;a href=&quot;http://www.apptite.be/blog/ios/sample-ios-application-stopwatch&quot;&gt;Sample iPhone Application: StopWatch Tutorial&lt;/a&gt;이다.&lt;/p&gt;
+
+&lt;p&gt;Outlet이나 Action의 개념은 이제 이해했기 때문에 UI를 꾸미고 그에 대한 메소드를 입력하는 것에는 큰 어려움이 없었다. 하지만 소스의 일부분은 iOS5에서 더이상 사용하지 않는 방식이라 조금 생소하기도 했다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;updateTimer&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSTimeInterval&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeInterval&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentDate&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;timeIntervalSinceDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;startDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timerDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;dateWithTimeIntervalSince1970&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeInterval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSDateFormatter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSDateFormatter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setDateFormat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;HH:mm:ss.SSS&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setTimeZone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSTimeZone&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;timeZoneForSecondsFromGMT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;stringFromDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timerDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;stopWatchLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;release&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;에서 &lt;code&gt;[dateFormatter release];&lt;/code&gt;나 &lt;code&gt;startDate = [[NSDate date]retain];&lt;/code&gt;
+같은 부분들이다.&lt;/p&gt;
+
+&lt;p&gt;새로워진 부분들은 잘 이해가 되지 않는 것도 있지만 &lt;a href=&quot;http://itunes.apple.com/kr/itunes-u/ipad-iphone-application-development/id473757255&quot;&gt;iTunes U - iPad and iPhone Application Development&lt;/a&gt;를 통해서 알아가고 있으니 차차 좋아질 것이라고 생각한다. 여하튼 소스코드를 참고해서 실행을 시켜보니 Timer가 제대로 가지 않고 00:01:00 만 계속 출력되는 것이었다. 처음에는 무엇이 문제인지 알 수가 없어서 공부하는 셈치고 &lt;code&gt;NSTimer&lt;/code&gt;, &lt;code&gt;NSDate&lt;/code&gt;의 Reference를 훑어보았다. 하지만 아무리 살펴보아도 문법에 어긋나거나 잘못된 부분을 찾을 수가 없었다.&lt;/p&gt;
+
+&lt;p&gt;그래서 nslog를 통해 콘솔로 데이터 값을 확인해 보면서 디버깅하려 했지만 콘솔을 통해 보는 것은 한계가 있었다. 그래서 Breakpoint를 설정하고 변수 값들을 상세히 살펴보았다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/2012-07-14/stacktimer.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;이 화면에서 볼 수 있듯이 처음 Start 버튼을 눌렀을 때의 날짜와 시간을 저장해두는 startDate, 매1초마다 현재의 시간을 저장하는 currentDate, startDate과 currentDate의 시간차이를 계산해서 저장하는 timeInterval, 그리고 1970년 1월 1일을 기준으로(00:00:00) timeInterval 만큼 시간을 더해나가는 timerDate까지 모두 이상 없이 저장이 잘 되고 있다는 사실을 확인할 수 있었다. 다만 일정 형식에 맞게 NSDate 클래스를 NSString으로 변환해주는 dateFormatter를 거치고 나면 항상 값이 00:01:00 으로 변한다는 사실을 알게 되었다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;updateTimer&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSTimeInterval&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeInterval&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentDate&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;timeIntervalSinceDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;startDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// NSLog([NSString stringWithFormat:@&amp;quot;%f&amp;quot;, timeInterval]);&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timerDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;dateWithTimeIntervalSince1970&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeInterval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSDateFormatter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSDateFormatter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setDateFormat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;HH:mm:ss&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setTimeZone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSTimeZone&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;timeZoneForSecondsFromGMT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;stringFromDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timerDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;//NSLog(timeString);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeDisplay&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;이 중에서 의심가는 부분은 딱 하나 바로 &lt;code&gt;[dateFormatter setDateFormat:@&quot;HH:mm:ss&quot;];&lt;/code&gt;였다. 그래서 &lt;code&gt;NSDateFormatter&lt;/code&gt;를 살펴보았고 Reference에서 &lt;a href=&quot;https://developer.apple.com/library/ios/#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html#//apple_ref/doc/uid/TP40002369-SW1&quot;&gt;Data Formatting Guide&lt;/a&gt;를 안내하길래 들어가 보았다. 그리고 가이드에 실려 있는 예제어서 다음과 같은 부분을 찾을 수 있었다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rfc3339DateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setDateFormat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;yyyy&amp;#39;-&amp;#39;MM&amp;#39;-&amp;#39;dd&amp;#39;T&amp;#39;HH&amp;#39;:&amp;#39;mm&amp;#39;:&amp;#39;ss&amp;#39;Z&amp;#39;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;어라, 연도와 날짜를 나타내는 구분자 외의 문자를 표현하기 위해 작은 따옴표를 사용하는 것이 아닌가. 그래서 updateTimer 메소드를 수정해봤다.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;updateTimer&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSTimeInterval&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeInterval&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentDate&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;timeIntervalSinceDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;startDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// NSLog([NSString stringWithFormat:@&amp;quot;%f&amp;quot;, timeInterval]);&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timerDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSDate&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;dateWithTimeIntervalSince1970&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeInterval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSDateFormatter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSDateFormatter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setDateFormat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;HH&amp;#39;:&amp;#39;mm&amp;#39;:&amp;#39;ss&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setTimeZone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSTimeZone&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;timeZoneForSecondsFromGMT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
+    &lt;span class=&quot;bp&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dateFormatter&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;stringFromDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timerDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;//NSLog(timeString);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeDisplay&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;setText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;그리고 실행을 다시 해보니…&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/2012-07-14/stacktimer_success.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;빙고!&lt;/p&gt;
+
+&lt;p&gt;지나고 나서 돌이켜보면 별것 아닌 것 같지만 이렇게 하나씩 내 힘으로 문제를 해결해 나가는 것이 재미있다. 다음 시간에는 Pause와 Reset을 구현해보고 소스를 조금 수정해서 StackTimer Class를 정의하고 Stack에 StackTimer Object를 저장하는 것까지 완성해봐야겠다. 오늘의 공부 끝!&lt;/p&gt;
+</description>
+        <pubDate>Sat, 14 Jul 2012 23:24:44 +0900</pubDate>
+        <link>http://localhost:4000/objective-c/2012/07/14/NSTimer_NSDate%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5_%E1%84%80%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AB%E1%84%92%E1%85%A1%E1%86%AB_%E1%84%90%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5(StopWatch)%E1%84%86%E1%85%A1%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://localhost:4000/objective-c/2012/07/14/NSTimer_NSDate%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5_%E1%84%80%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AB%E1%84%92%E1%85%A1%E1%86%AB_%E1%84%90%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5(StopWatch)%E1%84%86%E1%85%A1%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%80%E1%85%B5/</guid>
+      </item>
+    
+      <item>
+        <title>프로그래밍 놀이</title>
+        <description>&lt;p&gt;초등학생 때 GW-BASIC을 계기로 프로그래밍을 시작했고 중학생이 되어서는 Turbo C를 만날 수 있었다. 고등학생이 되어 자료구조와 알고리즘에 대해 공부를 하기 시작했고 이후 Visual Basic, Adobe Air/Flex(Action Script) 등을 통해 프로그래밍 경험을 쌓았다. 나에게 있어 프로그래밍은 노동이 아니라 놀이 그 자체였다. 즐겁게 하다가도 그만두고 싶으면 그만둘 수 있는 것이 놀이지만 기록하지 않으면 쉽게 잊는 특성 때문에 블로그를 시작한다.&lt;/p&gt;
+
+&lt;p&gt;첫 번째 도전과제는 iOS 프로그래밍이다. 그리고 처음으로 만들게 될 프로그램은 바로 &lt;a href=&quot;http://xrath.com/2012/05/time-management-based-on-stack&quot;&gt;스택기반의 시간관리 도구&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;긴말이 필요없다.
+자, 그럼 놀이 시작!&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;cp&quot;&gt;#import hanging-out-with-programming.h&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;implementation&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// it&amp;#39;s party time&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;nslog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;it&amp;#39;s party time&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+</description>
+        <pubDate>Wed, 11 Jul 2012 03:43:15 +0900</pubDate>
+        <link>http://localhost:4000/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%EC%9D%BC%EB%B0%98/2012/07/11/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%82%E1%85%A9%E1%86%AF%E1%84%8B%E1%85%B5/</link>
+        <guid isPermaLink="true">http://localhost:4000/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%EC%9D%BC%EB%B0%98/2012/07/11/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%82%E1%85%A9%E1%86%AF%E1%84%8B%E1%85%B5/</guid>
+      </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Context::set()으로 태그 강제 입력하기 &#8211; 프로그래밍 놀이</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="글 작성시에 애드온을 호출하고 Context::set('tags', $value)를 실행해도 애초에 태그 필드가 비어있으면 값이 저장되지 않는다. Context.Class.php 파일을 분석하니 set() 함수가 다음과 같이 정의되어 있었다.">
+    <meta name="author" content="jdssem">
+    <meta name="keywords" content="xpressengine">
+    <link rel="canonical" href="http://localhost:4000/xpressengine/2012/08/14/Contextset()%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9_%E1%84%90%E1%85%A2%E1%84%80%E1%85%B3_%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%A6_%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201502012359" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Context::set()으로 태그 강제 입력하기">
+    <meta property="og:description" content="Programming for fun!">
+    <meta property="og:url" content="http://localhost:4000/xpressengine/2012/08/14/Contextset()%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9_%E1%84%90%E1%85%A2%E1%84%80%E1%85%B3_%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%A6_%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/">
+    <meta property="og:site_name" content="프로그래밍 놀이">
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://localhost:4000" class="site-title">프로그래밍 놀이</a>
+      <nav class="site-nav right">
+        <a href="/about/">About</a>
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+
+
+<div class="post-header mb2">
+  <h1>Context::set()으로 태그 강제 입력하기</h1>
+  <span class="post-meta">2012년 8월 14일</span><br>
+    
+  <span class="post-meta small">
+  
+    1분 분량
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <p>글 작성시에 애드온을 호출하고 <code>Context::set('tags', $value)</code>를 실행해도 애초에 태그 필드가 비어있으면 값이 저장되지 않는다. Context.Class.php 파일을 분석하니 set() 함수가 다음과 같이 정의되어 있었다.</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">**</span>
+<span class="x"> * @brief set a context value with a key</span>
+<span class="x"> **</span>
+<span class="x">function set($key, $val, $set_to_get_vars=0) {</span>
+<span class="x">	is_a($this,&#39;Context&#39;)?$self=&amp;amp;$this:$self=&amp;amp;Context::getInstance();</span>
+<span class="x">	$self-&gt;context-&gt;{$key} = $val;</span>
+<span class="x">	if($set_to_get_vars === false) return;</span>
+<span class="x">	if($val === NULL || $val === &#39;&#39;)</span>
+<span class="x">	{</span>
+<span class="x">		unset($self-&gt;get_vars-&gt;{$key});</span>
+<span class="x">		return;</span>
+<span class="x">	}</span>
+<span class="x">	if($set_to_get_vars || $self-&gt;get_vars-&gt;{$key}) $self-&gt;get_vars-&gt;{$key} = $val;</span>
+<span class="x">}</span></code></pre></div>
+
+<p>코드를 보면 $set_to_get_vars를 1로 설정해 주면 $self-&gt;get_vars를 통해 $val 값을 초기화하는 것을 알 수 있다. 따라서 다음과 같이 메서드를 호출하면 된다.</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">Context::set(&#39;tags&#39;,$val, 1);</span></code></pre></div>
+
+
+</article>
+
+
+
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname  = 'hangoutwithprogramming';
+    var disqus_identifier = '/xpressengine/2012/08/14/Contextset()으로_태그_강제_입력하기';
+    var disqus_title      = '';
+
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+        © dev.jdssem.com
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
