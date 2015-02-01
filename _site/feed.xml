@@ -3,8 +3,8 @@
   <channel>
     <title>프로그래밍 놀이</title>
     <description>Programming for fun!</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <link>http://dev.jdssem.com/</link>
+    <atom:link href="http://dev.jdssem.com/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
         <title>@property의 속성 지정</title>
@@ -24,8 +24,8 @@
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 </description>
         <pubDate>Thu, 08 May 2014 22:06:04 +0900</pubDate>
-        <link>http://localhost:4000/objective-c/2014/05/08/property%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%8C%E1%85%B5%E1%84%8C%E1%85%A5%E1%86%BC/</link>
-        <guid isPermaLink="true">http://localhost:4000/objective-c/2014/05/08/property%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%8C%E1%85%B5%E1%84%8C%E1%85%A5%E1%86%BC/</guid>
+        <link>http://dev.jdssem.com/objective-c/2014/05/08/property%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%8C%E1%85%B5%E1%84%8C%E1%85%A5%E1%86%BC/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/objective-c/2014/05/08/property%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%8C%E1%85%B5%E1%84%8C%E1%85%A5%E1%86%BC/</guid>
       </item>
     
       <item>
@@ -82,8 +82,8 @@ Although your app can (and typically should) add more than one task to a session
 &lt;p&gt;현재는 로그인을 위해 xe에 직접 POST로 아이디와 비밀번호는 전송하고 xe/modules/member.controller.php가 처리하는 형태라 보안상으로도 좋지 않기 때문에 추후에는 xe에서 자체 모듈을 개발할 필요가 있어 보인다.&lt;/p&gt;
 </description>
         <pubDate>Wed, 02 Apr 2014 12:00:05 +0900</pubDate>
-        <link>http://localhost:4000/xpressengine/2014/04/02/NSURLSession_%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A2%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%92%E1%85%AA%E1%86%AF%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2_XE_%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
-        <guid isPermaLink="true">http://localhost:4000/xpressengine/2014/04/02/NSURLSession_%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A2%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%92%E1%85%AA%E1%86%AF%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2_XE_%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+        <link>http://dev.jdssem.com/xpressengine/2014/04/02/NSURLSession_%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A2%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%92%E1%85%AA%E1%86%AF%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2_XE_%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/xpressengine/2014/04/02/NSURLSession_%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A2%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%92%E1%85%AA%E1%86%AF%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2_XE_%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
       </item>
     
       <item>
@@ -101,8 +101,8 @@ Although your app can (and typically should) add more than one task to a session
 &lt;p&gt;다음 과제는 iOS에서 xe에 로그인하기와 JSON으로 정보 가져오기다. 이 글을 쓰는 시점에는 이미 성공한 내용인데 곧 정리를 해야겠다. 앞으로 계속 치고 나가고 싶지만 꾹꾹 참고 블로그에 정리를 한다. 앞으로 많이 기대해 주시라.&lt;/p&gt;
 </description>
         <pubDate>Mon, 31 Mar 2014 13:56:26 +0900</pubDate>
-        <link>http://localhost:4000/%EC%9E%A1%EB%8B%B4/2014/03/31/iOS_%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%89%E1%85%B5%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
-        <guid isPermaLink="true">http://localhost:4000/%EC%9E%A1%EB%8B%B4/2014/03/31/iOS_%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%89%E1%85%B5%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+        <link>http://dev.jdssem.com/%EC%9E%A1%EB%8B%B4/2014/03/31/iOS_%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%89%E1%85%B5%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/%EC%9E%A1%EB%8B%B4/2014/03/31/iOS_%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%89%E1%85%B5%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
       </item>
     
       <item>
@@ -122,8 +122,8 @@ Although your app can (and typically should) add more than one task to a session
 &lt;p&gt;그럼, 새로운 도전을 위하여. World is the will to power—and nothing besides!&lt;/p&gt;
 </description>
         <pubDate>Sun, 09 Jun 2013 12:05:25 +0900</pubDate>
-        <link>http://localhost:4000/%EC%9E%A1%EB%8B%B4/2013/06/09/%E1%84%89%E1%85%A2%E1%84%85%E1%85%A9%E1%84%8B%E1%85%AE%E1%86%AB_%E1%84%83%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB/</link>
-        <guid isPermaLink="true">http://localhost:4000/%EC%9E%A1%EB%8B%B4/2013/06/09/%E1%84%89%E1%85%A2%E1%84%85%E1%85%A9%E1%84%8B%E1%85%AE%E1%86%AB_%E1%84%83%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB/</guid>
+        <link>http://dev.jdssem.com/%EC%9E%A1%EB%8B%B4/2013/06/09/%E1%84%89%E1%85%A2%E1%84%85%E1%85%A9%E1%84%8B%E1%85%AE%E1%86%AB_%E1%84%83%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/%EC%9E%A1%EB%8B%B4/2013/06/09/%E1%84%89%E1%85%A2%E1%84%85%E1%85%A9%E1%84%8B%E1%85%AE%E1%86%AB_%E1%84%83%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB/</guid>
       </item>
     
       <item>
@@ -151,8 +151,8 @@ Although your app can (and typically should) add more than one task to a session
 
 </description>
         <pubDate>Tue, 14 Aug 2012 18:00:07 +0900</pubDate>
-        <link>http://localhost:4000/xpressengine/2012/08/14/Contextset()%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9_%E1%84%90%E1%85%A2%E1%84%80%E1%85%B3_%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%A6_%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
-        <guid isPermaLink="true">http://localhost:4000/xpressengine/2012/08/14/Contextset()%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9_%E1%84%90%E1%85%A2%E1%84%80%E1%85%B3_%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%A6_%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+        <link>http://dev.jdssem.com/xpressengine/2012/08/14/Contextset()%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9_%E1%84%90%E1%85%A2%E1%84%80%E1%85%B3_%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%A6_%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/xpressengine/2012/08/14/Contextset()%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9_%E1%84%90%E1%85%A2%E1%84%80%E1%85%B3_%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%A6_%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
       </item>
     
       <item>
@@ -252,8 +252,8 @@ Although your app can (and typically should) add more than one task to a session
 &lt;/ul&gt;
 </description>
         <pubDate>Tue, 14 Aug 2012 16:23:44 +0900</pubDate>
-        <link>http://localhost:4000/xpressengine/2012/08/14/%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%91%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%A6_%E1%84%89%E1%85%A2_%E1%84%80%E1%85%B3%E1%86%AF_%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%92%E1%85%AE_%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%86%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%8C%E1%85%A1_%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A9_%E1%84%83%E1%85%B3%E1%86%BC%E1%84%8B%E1%85%B3%E1%86%AF_%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%8B%E1%85%A9%E1%84%82%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB/</link>
-        <guid isPermaLink="true">http://localhost:4000/xpressengine/2012/08/14/%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%91%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%A6_%E1%84%89%E1%85%A2_%E1%84%80%E1%85%B3%E1%86%AF_%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%92%E1%85%AE_%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%86%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%8C%E1%85%A1_%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A9_%E1%84%83%E1%85%B3%E1%86%BC%E1%84%8B%E1%85%B3%E1%86%AF_%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%8B%E1%85%A9%E1%84%82%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB/</guid>
+        <link>http://dev.jdssem.com/xpressengine/2012/08/14/%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%91%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%A6_%E1%84%89%E1%85%A2_%E1%84%80%E1%85%B3%E1%86%AF_%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%92%E1%85%AE_%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%86%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%8C%E1%85%A1_%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A9_%E1%84%83%E1%85%B3%E1%86%BC%E1%84%8B%E1%85%B3%E1%86%AF_%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%8B%E1%85%A9%E1%84%82%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/xpressengine/2012/08/14/%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%91%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%A6_%E1%84%89%E1%85%A2_%E1%84%80%E1%85%B3%E1%86%AF_%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%92%E1%85%AE_%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%86%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%8C%E1%85%A1_%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A9_%E1%84%83%E1%85%B3%E1%86%BC%E1%84%8B%E1%85%B3%E1%86%AF_%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%8B%E1%85%A9%E1%84%82%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB/</guid>
       </item>
     
       <item>
@@ -277,8 +277,8 @@ Although your app can (and typically should) add more than one task to a session
 
 </description>
         <pubDate>Tue, 14 Aug 2012 09:46:23 +0900</pubDate>
-        <link>http://localhost:4000/xpressengine/2012/08/14/%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5_document_srl_%E1%84%80%E1%85%AE%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
-        <guid isPermaLink="true">http://localhost:4000/xpressengine/2012/08/14/%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5_document_srl_%E1%84%80%E1%85%AE%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+        <link>http://dev.jdssem.com/xpressengine/2012/08/14/%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5_document_srl_%E1%84%80%E1%85%AE%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/xpressengine/2012/08/14/%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5_document_srl_%E1%84%80%E1%85%AE%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
       </item>
     
       <item>
@@ -357,8 +357,8 @@ Although your app can (and typically should) add more than one task to a session
 &lt;/ul&gt;
 </description>
         <pubDate>Tue, 14 Aug 2012 09:13:36 +0900</pubDate>
-        <link>http://localhost:4000/xpressengine/2012/08/14/xe_%E1%84%83%E1%85%B5%E1%84%87%E1%85%A5%E1%84%80%E1%85%B5%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
-        <guid isPermaLink="true">http://localhost:4000/xpressengine/2012/08/14/xe_%E1%84%83%E1%85%B5%E1%84%87%E1%85%A5%E1%84%80%E1%85%B5%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
+        <link>http://dev.jdssem.com/xpressengine/2012/08/14/xe_%E1%84%83%E1%85%B5%E1%84%87%E1%85%A5%E1%84%80%E1%85%B5%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/xpressengine/2012/08/14/xe_%E1%84%83%E1%85%B5%E1%84%87%E1%85%A5%E1%84%80%E1%85%B5%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/</guid>
       </item>
     
       <item>
@@ -434,8 +434,8 @@ Although your app can (and typically should) add more than one task to a session
 &lt;p&gt;지나고 나서 돌이켜보면 별것 아닌 것 같지만 이렇게 하나씩 내 힘으로 문제를 해결해 나가는 것이 재미있다. 다음 시간에는 Pause와 Reset을 구현해보고 소스를 조금 수정해서 StackTimer Class를 정의하고 Stack에 StackTimer Object를 저장하는 것까지 완성해봐야겠다. 오늘의 공부 끝!&lt;/p&gt;
 </description>
         <pubDate>Sat, 14 Jul 2012 23:24:44 +0900</pubDate>
-        <link>http://localhost:4000/objective-c/2012/07/14/NSTimer_NSDate%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5_%E1%84%80%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AB%E1%84%92%E1%85%A1%E1%86%AB_%E1%84%90%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5(StopWatch)%E1%84%86%E1%85%A1%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%80%E1%85%B5/</link>
-        <guid isPermaLink="true">http://localhost:4000/objective-c/2012/07/14/NSTimer_NSDate%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5_%E1%84%80%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AB%E1%84%92%E1%85%A1%E1%86%AB_%E1%84%90%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5(StopWatch)%E1%84%86%E1%85%A1%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%80%E1%85%B5/</guid>
+        <link>http://dev.jdssem.com/objective-c/2012/07/14/NSTimer_NSDate%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5_%E1%84%80%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AB%E1%84%92%E1%85%A1%E1%86%AB_%E1%84%90%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5(StopWatch)%E1%84%86%E1%85%A1%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%80%E1%85%B5/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/objective-c/2012/07/14/NSTimer_NSDate%E1%84%85%E1%85%B3%E1%86%AF_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5_%E1%84%80%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AB%E1%84%92%E1%85%A1%E1%86%AB_%E1%84%90%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5(StopWatch)%E1%84%86%E1%85%A1%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%80%E1%85%B5/</guid>
       </item>
     
       <item>
@@ -454,8 +454,8 @@ Although your app can (and typically should) add more than one task to a session
 &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 </description>
         <pubDate>Wed, 11 Jul 2012 03:43:15 +0900</pubDate>
-        <link>http://localhost:4000/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%EC%9D%BC%EB%B0%98/2012/07/11/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%82%E1%85%A9%E1%86%AF%E1%84%8B%E1%85%B5/</link>
-        <guid isPermaLink="true">http://localhost:4000/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%EC%9D%BC%EB%B0%98/2012/07/11/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%82%E1%85%A9%E1%86%AF%E1%84%8B%E1%85%B5/</guid>
+        <link>http://dev.jdssem.com/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%EC%9D%BC%EB%B0%98/2012/07/11/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%82%E1%85%A9%E1%86%AF%E1%84%8B%E1%85%B5/</link>
+        <guid isPermaLink="true">http://dev.jdssem.com/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%EC%9D%BC%EB%B0%98/2012/07/11/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%82%E1%85%A9%E1%86%AF%E1%84%8B%E1%85%B5/</guid>
       </item>
     
   </channel>
