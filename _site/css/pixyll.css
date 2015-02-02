@@ -615,7 +615,7 @@ a:hover {
 
 */
 body {
-  font-family: "Merriweather", 'Apple SD Gothic Neo', "PT Serif", Georgia, "Times New Roman", serif;
+  font-family: "Lato", "Apple SD Gothic Neo", "Nanum Barun Gothic",  "Nanum Gothic", Verdana, Arial, Dotum, sans-serif;
   font-weight: 300; }
 
 html, body {
@@ -777,7 +777,7 @@ table {
 .meta,
 .post-meta {
   width: auto;
-  font-size: rem;
+  font-size: 1rem;
   font-weight: 300;
   margin: 0;
   padding: .25em 0;
@@ -818,7 +818,7 @@ abbr {
 
 pre, code {
   font-family: "Courier New", monospace;
-  font-size: 1.3rem; }
+  font-size: 15px; }
 
 code {
   color: #333;
@@ -870,6 +870,29 @@ h6,
   line-height: 1.2;
   margin: 1em 0 0.5em; }
 
+.h1,
+h1 {
+  font-size: 32px; }
+
+.h2,
+h2 {
+  font-size: 28px; }
+
+.h3,
+h3 {
+  font-size: 24px; }
+
+.h4,
+h4 {
+  font-size: 20px; }
+
+.p,
+p,
+li {
+  font-size: 18px;
+  color: #4f5259;
+  line-height: 1.8; }
+
 .social-icons {
   padding: 0.5em 0 0 0;
   font-size: 1.25rem;
@@ -895,29 +918,8 @@ h6,
   .post-meta {
     margin: 0;
     padding: 0;
-    font-size: 1.25rem; }
-
-  .h1,
-  h1 {
-    font-size: 2.6rem; }
-
-  .h2,
-  h2 {
-    font-size: 2.298rem; }
-
-  .h3,
-  h3 {
-    font-size: 1.625rem; }
-
-  .h4,
-  h4 {
-    font-size: 1.150rem; }
-
-  .p,
-  p,
-  li {
-    font-size: 1.25rem;
-    line-height: 1.8; }
+    font-size: 18px;
+    font-style: italic; }
 
   .small {
     font-size: 1rem; }
@@ -943,22 +945,6 @@ h6,
     margin-right: 0;
     padding: 0.5em; }
 
-  .h1,
-  h1 {
-    font-size: 1.5rem; }
-
-  .h2,
-  h2 {
-    font-size: 1.4rem; }
-
-  .h3,
-  h3 {
-    font-size: 1.2rem; }
-
-  .h4,
-  h4 {
-    font-size: 1rem; }
-
   .site-header {
     text-align: center; }
 
@@ -980,27 +966,14 @@ h6,
     float: left;
     font-size: 2rem; }
 
-  .h1,
-  h1 {
-    font-size: 2.8rem; }
-
-  .h2,
-  h2 {
-    font-size: 2.4rem; }
-
-  .h3,
-  h3 {
-    font-size: 2rem; }
-
-  .h4,
-  h4 {
-    font-size: 1.591rem; }
-
   .posts .post-meta {
     padding-bottom: 0.2em; }
 
   .post-link .post-title {
     margin-top: .125em; }
+
+  .posts .post-summary {
+    font-size: 18px; }
 
   .posts .post {
     margin-bottom: 2.666em;
