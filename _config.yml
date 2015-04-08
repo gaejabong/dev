@@ -7,7 +7,7 @@ baseurl:     ""
 url:         "http://dev.jdssem.com"
 
 # Google analytics
-google_analytics:
+google_analytics: UA-61683487-1
 
 # Optional features
 animated:           false
