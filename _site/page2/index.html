@@ -11,7 +11,7 @@
     <link rel="canonical" href="http://dev.jdssem.com/page2/">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/pixyll.css?201504082340" type="text/css">
+    <link rel="stylesheet" href="/css/pixyll.css?201504152354" type="text/css">
 
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
@@ -29,6 +29,7 @@
     <meta property="og:site_name" content="프로그래밍 놀이">
 
     <!-- Icons -->
+    <!--
     <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
     <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
@@ -43,6 +44,7 @@
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
     <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
     <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+	-->
 </head>
 
 <body class="">
@@ -67,6 +69,14 @@
         <div class="home">
 
   <div class="posts">
+    
+      <div class="post">
+        <a href="/xpressengine/2012/08/14/Contextset()%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9_%E1%84%90%E1%85%A2%E1%84%80%E1%85%B3_%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%A6_%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5/" class="post-link">
+          <p class="post-meta">2012년 8월 14일</p>
+          <h3 class="post-title">Context::set()으로 태그 강제 입력하기</h3>
+          <p class="post-summary">글 작성시에 애드온을 호출하고 Context::set('tags', $value)를 실행해도 애초에 태그 필드가 비어있으면 값이 저장되지 않는다. Context.Class.php 파일을 분석하니 set() 함수가 다음과 같이 정의되어 있었다.</p>
+        </a>
+      </div>
     
       <div class="post">
         <a href="/xpressengine/2012/08/14/%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%91%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%A6_%E1%84%89%E1%85%A2_%E1%84%80%E1%85%B3%E1%86%AF_%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%92%E1%85%AE_%E1%84%80%E1%85%A6%E1%84%89%E1%85%B5%E1%84%86%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%8C%E1%85%A1_%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A9_%E1%84%83%E1%85%B3%E1%86%BC%E1%84%8B%E1%85%B3%E1%86%AF_%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%8B%E1%85%A9%E1%84%82%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A2%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A9%E1%86%AB/" class="post-link">
@@ -100,14 +110,6 @@
         </a>
       </div>
     
-      <div class="post">
-        <a href="/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%EC%9D%BC%EB%B0%98/2012/07/11/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%86%E1%85%B5%E1%86%BC_%E1%84%82%E1%85%A9%E1%86%AF%E1%84%8B%E1%85%B5/" class="post-link">
-          <p class="post-meta">2012년 7월 11일</p>
-          <h3 class="post-title">프로그래밍 놀이</h3>
-          <p class="post-summary">초등학생 때 GW-BASIC을 계기로 프로그래밍을 시작했고 중학생이 되어서는 Turbo C를 만날 수 있었다. 고등학생이 되어 자료구조와 알고리즘에 대해 공부를 하기 시작했고 이후 Visual Basic, Adobe Air/Flex(Action Script) 등을 통해 프로그래밍 경험을 쌓았다. 나에게 있어 프로그래밍은 노동이 아니라 놀이 그 자체였다. 즐겁게 하다가도 그만두고 싶으면 그만둘 수 있는 것이 놀이지만 기록하지 않으면 쉽게 잊는 특성 때문에 블로그를 시작한다.</p>
-        </a>
-      </div>
-    
   </div>
 
   <div class="pagination clearfix mb1 mt4">
@@ -120,7 +122,7 @@
   </div>
   <div class="right">
     
-      <span class="pagination-item disabled">Older</span>
+      <a class="pagination-item" href="/page3/">Older</a>
     
   </div>
 </div>

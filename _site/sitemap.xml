@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://dev.jdssem.com/%EC%9E%A1%EB%8B%B4/2015/04/15/%E1%84%8E%E1%85%AC%E1%84%80%E1%85%B3%E1%86%AB_%E1%84%80%E1%85%B3%E1%86%AB%E1%84%92%E1%85%AA%E1%86%BC/</loc>
+    <lastmod>2015-04-15T23:16:00+09:00</lastmod>
+  </url>
+  <url>
     <loc>http://dev.jdssem.com/objective-c/2014/05/08/property%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC_%E1%84%8C%E1%85%B5%E1%84%8C%E1%85%A5%E1%86%BC/</loc>
     <lastmod>2014-05-08T22:06:04+09:00</lastmod>
   </url>
@@ -63,5 +67,11 @@
   </url>
   <url>
     <loc>http://dev.jdssem.com/잡담/</loc>
+  </url>
+  <url>
+    <loc>http://dev.jdssem.com/page2/</loc>
+  </url>
+  <url>
+    <loc>http://dev.jdssem.com/page3/</loc>
   </url>
 </urlset>
