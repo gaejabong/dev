@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>인디스쿨의 서버 응답 속도 최적화 이야기 &#8211; 프로그래밍 놀이</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="인디스쿨에 자주 들어오시는 선생님들은 아마 눈치채셨을지도 모르겠지만 며칠 전부터 인디스쿨의 속도는 매우 쾌적하다. 얼마전까지만 해도 3월 대란, 가정의 달 대란이라며 특정 시점에 인디스쿨이 엄청 느려지는 것은 물론이고 평소에도 접속자가 몰리는 아침 시간부터 오후 늦게까지 사이트 속도는 전반적으로 만족스럽지 못한 편이었다. 구체적인 수치를 언급해 보자면 속도 최적화 이전에는 서버측 애플리케이션의 응답속도가 심할 때는 10Kms를 상회했었는데 지금은 평균 200ms 수준으로 떨어졌다. 도대체 무슨 일이 있었던걸까? 그 이야기를 좀 풀어보고자 한다.">
+    <meta name="author" content="jdssem">
+    <meta name="keywords" content="서버운영">
+    <link rel="canonical" href="http://dev.jdssem.com/%EC%84%9C%EB%B2%84%EC%9A%B4%EC%98%81/2015/05/21/%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%83%E1%85%B5%E1%84%89%E1%85%B3%E1%84%8F%E1%85%AE%E1%86%AF%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5_%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%83%E1%85%A9_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A5%E1%86%A8%E1%84%92%E1%85%AA_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%A3%E1%84%80%E1%85%B5/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201505220222" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="인디스쿨의 서버 응답 속도 최적화 이야기">
+    <meta property="og:description" content="Programming for fun!">
+    <meta property="og:url" content="http://dev.jdssem.com/%EC%84%9C%EB%B2%84%EC%9A%B4%EC%98%81/2015/05/21/%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%83%E1%85%B5%E1%84%89%E1%85%B3%E1%84%8F%E1%85%AE%E1%86%AF%E1%84%8B%E1%85%B4_%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5_%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8_%E1%84%89%E1%85%A9%E1%86%A8%E1%84%83%E1%85%A9_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A5%E1%86%A8%E1%84%92%E1%85%AA_%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%A3%E1%84%80%E1%85%B5/">
+    <meta property="og:site_name" content="프로그래밍 놀이">
+
+    <!-- Icons -->
+    <!--
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+	-->
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://dev.jdssem.com" class="site-title">프로그래밍 놀이</a>
+      <nav class="site-nav right">
+        <a href="/about/">About</a>
+<a href="/feed">RSS</a>
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  <h1>인디스쿨의 서버 응답 속도 최적화 이야기</h1>
+  <span class="post-meta">2015년 5월 21일</span><br>
+    
+  <span class="post-meta small">
+  
+    9분 분량
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <h3 id="section">인디스쿨이 빨라졌어요!</h3>
+<p>인디스쿨에 자주 들어오시는 선생님들은 아마 눈치채셨을지도 모르겠지만 며칠 전부터 인디스쿨의 속도는 매우 쾌적하다. 얼마전까지만 해도 3월 대란, 가정의 달 대란이라며 특정 시점에 인디스쿨이 엄청 느려지는 것은 물론이고 평소에도 접속자가 몰리는 아침 시간부터 오후 늦게까지 사이트 속도는 전반적으로 만족스럽지 못한 편이었다. 구체적인 수치를 언급해 보자면 속도 최적화 이전에는 서버측 애플리케이션의 응답속도가 심할 때는 10Kms를 상회했었는데 지금은 평균 200ms 수준으로 떨어졌다. 도대체 무슨 일이 있었던걸까? 그 이야기를 좀 풀어보고자 한다.</p>
+
+<p>(주의) 이 글은 굉장히 기술적인 내용을 중심으로 작성되어 있지만 그렇다고 그 방법을 구체적으로 기술하지는 않았으며 선생님들이 읽으시기에는 ‘무슨 말인지는 모르겠지만 고생이 많네’라는 평이 예상되는 수준의 글입니다.</p>
+
+<h3 id="section-1">최적화 이전의 상태</h3>
+<p>먼저 최적화 이전에 인디스쿨의 네트워크 구성 및 환경에 대해서 간략히 설명해볼까 한다. 내가 인디스쿨 기술지원팀(당시 이름은 웹팀)에 합류하기 이전에 이미 여러 대의 웹서버가 L4 스위치 아래에서 로드밸런싱을 하고 있었고 DB서버, 스토리지 서버가 나뉘어져 있었다. 기본적으로 부하 분산을 위한 구성이 되어 있었던 셈이다. 게다가 합류 이후에는 DB서버도 아주 성능이 좋은(64 Core/32GB RAM) 것으로 교체를 했고 최근에는 웹서버도 추가 및 교체를 하였다.
+  그렇지만 무언가 투자한 것에 비해 그 결과가 제대로 나오는 것 같지 않아서 항상 찝찝한 마음을 버릴 수가 없었다. 무엇이 문제인지 알아보려고 MRTG, Observium, Cacti 같은 모니터링 도구들도 사용해보고 top, innotop, ps, sar 같은 명령어들을 통해 수시로 서버의 상태를 살펴보았지만 대략적인 계측만 이루어질뿐 인디스쿨이 느린 결정적인 원인이 무엇일까? 하는 질문에는 여러 가지 추측이 난무할 뿐이었다. 당시에 던졌던 대표적인 질문들을 살펴보면</p>
+
+<ul>
+  <li>웹서버 접속량이 많은게 아닐까?</li>
+  <li>Apache가 느린게 아닐까?</li>
+  <li>DB서버가 느린게 아닐까?</li>
+  <li>스토리지서버가 느린게 아닐까?</li>
+  <li>XE가 느린게 아닐까?</li>
+</ul>
+
+<p>그저 모든 것이 느리진 않을까하는 막연한 질문들 뿐이었다.</p>
+
+<h3 id="section-2">추측하지 말고 계측하라</h3>
+<p>일단 무엇이 느린지 원인을 제대로 파악하려면 추측이 아니라 구체적인 데이터가 필요했다. 그래서 꾸준히 모니터링을 위한 좋은 도구들을 알아보고 있었는데 이것 저것 검색하는 도중 <a href="http://newrelic.com">New Relic</a>이라는 업체를 알게 되었다. RPM 패키지나 yum, apt-get과 같은 패키지 관리 도구를 통해서도 손쉽게 설치할 수 있는데 서버의 각종 데이터를 주기적으로 측정해서 New Relic 서버로 그 결과를 보내고 그래프 등을 통해 여러 정보를 확인할 수 있다. 무료 임에도 불구하고 매우 의미있고 다양한 데이터를 얻을 수 있다.
+  그 중에서 APM이라는 애플리케이션의 실행 속도를 측정해주는 서비스가 있다. 무료로도 이용가능하지만 구체적인 트랜잭션을 살펴보려면 유료 구독을 해야한다.(근데 그 가격이 상상을 초월한다.) 아무튼 APM 서비스를 통해 인디스쿨의 상태를 살펴보니 재미있는 결과가 나왔다.</p>
+
+<p><img src="/images/2015-05-21/인디스쿨의하루.png" alt="" /></p>
+
+<p>이처럼 서비스 이용 행태가 예측 가능한 경우가 얼마나 될까? APM의 도입 이후 알게 된 사실은 크게 2가지 이다.</p>
+
+<ol>
+  <li>인디스쿨은 아침 출근 시간대에 속도가 가장 느려지고 점차 속도가 안정을 되찾다가 점심시간 이후에 다시 느려지고 퇴근 시간이 지나면 급격히 회복된다.</li>
+  <li>DB의 응답속도는 생각보다 빠르며 전체 앱 응답속도에서 차지하는 비중이 낮다.</li>
+</ol>
+
+<p>New Relic APM 이외에 도입한 또다른 도구는 바로 <a href="http://analytics.google.com">Google Analytics</a>이다. GA는 10여년 전에 개인 블로그에서 사용해본 적이 있었는데 최근 다시 사용해보니 기능이 많이 개선되었고 다양한 통계 자료를 확인할 수 있었다. 그 중에서도 인상적인 것은 실시간 사용자 수였는데 서버의 처리량이 가장 많은 아침 출근 시간대의 동시 접속자수를 살펴보니 대략 3~4천명 정도가 된다는 것을 확인할 수 있었다.</p>
+
+<p><img src="/images/2015-05-21/인디스쿨활성사용자수.png" alt="" /></p>
+
+<p>이 외에도 다양한 데이터들을 수집할 수 있었다. 사실 데이터 수집은 어렵지 않았다. 그런데 정작 중요하면서도 결코 쉽지 않은 것은 수집한 데이터의 의미를 분석하는 것이었다. 데이터를 살펴보면서 든 가장 큰 의문점은 <u>왜 처리량이 늘어나면 응답 속도가 급격히 느려지는 것일까?</u> 하는 것이었다. 병목구간이 어디일지 자면서도 계속 고민을 하게 되었다.</p>
+
+<h3 id="nginx-">nginx로의 전환</h3>
+<p>최적화 이전에 이미 Apache 2.4의 event-mpm 방식을 사용하고 있었고 PHP 또한 아파치 모듈로 처리하는 것이 아니라 php-fpm을 사용했기 때문에 nginx로 웹서버를 바꾼다고 해서 드라마틱한 효과는 없을것이라 예상을 했었다. 여러 벤치 마크 자료들을 살펴봐도 static한 파일의 전송에는 nginx가 다소 우위지만 동적 파일 처리에는 오히려 아파치가 낫다는 자료도 있었으니 말이다. 그러나 인디스쿨은 파일 다운로드가 빈번하게 일어나기도 하고 event-driven 방식의 nginx가 분명 효율적인 면이 있을 것 같아 전환을 결정하게 되었다. 물론 예상했던 것처럼 nginx로의 전환 이후에도 유의미한 성능의 변화는 없었다.</p>
+
+<p>다만 nginx로 넘어간 김에 새롭게 시도해 본 것이 있었다. 기존에는 웹서버와 php-fpm이 같은 서버에서 작동하고 있었는데 이걸 분리하면 혹시 PHP의 처리 속도를 좀 줄일 수 있지 않을까 하는 생각에서 분리를 한 것이다. 웹서버와 php-fpm 서버를 1:1로 연결하고 추이를 살펴보니 한 가지 특이점을 발견하게 되었다. 웹서버와 php-fpm 서버 사이의 데이터 전송량이 생각보다 굉장히 높다는 것이었다. PHP만 처리하는데 이렇게 값이 높을리가 없다는 생각이 들었을 때 xe-core를 의심해 보게 되었다.</p>
+
+<h3 id="xe-core-">xe-core의 수정</h3>
+<p>인디스쿨은 굉장히 다운로드의 비중이 높은 편이다. 대체로 선생님들의 출근 시각인 8시 40분이 지나면 바로 네트워크 전송량이 1Gbps에 이른다. 혹시 다운로드를 처리하는 부분에 열쇠가 있지 않을까 싶어 파일 모듈을 살펴보다 다음과 같은 코드를 발견했다.</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+    <span class="c1">// file.controller.php의 procFileOutput() 부분</span>
+
+    <span class="nv">$fp</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="nv">$uploaded_filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nv">$fp</span><span class="p">)</span> <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">stop</span><span class="p">(</span><span class="s1">&#39;msg_file_not_found&#39;</span><span class="p">);</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s2">&quot;Cache-Control: &quot;</span><span class="p">);</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s2">&quot;Pragma: &quot;</span><span class="p">);</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s2">&quot;Content-Type: application/octet-stream&quot;</span><span class="p">);</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s2">&quot;Last-Modified: &quot;</span> <span class="o">.</span> <span class="nb">gmdate</span><span class="p">(</span><span class="s2">&quot;D, d M Y H:i:s&quot;</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot; GMT&quot;</span><span class="p">);</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s2">&quot;Content-Length: &quot;</span> <span class="o">.</span><span class="p">(</span><span class="nx">string</span><span class="p">)(</span><span class="nv">$file_size</span><span class="p">));</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: attachment; filename=&quot;&#39;</span><span class="o">.</span><span class="nv">$filename</span><span class="o">.</span><span class="s1">&#39;&quot;&#39;</span><span class="p">);</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s2">&quot;Content-Transfer-Encoding: binary</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="c1">// if file size is lager than 10MB, use fread function (#18675748)</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">filesize</span><span class="p">(</span><span class="nv">$uploaded_filename</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="nb">feof</span><span class="p">(</span><span class="nv">$fp</span><span class="p">))</span> <span class="k">echo</span> <span class="nb">fread</span><span class="p">(</span><span class="nv">$fp</span><span class="p">,</span> <span class="mi">1024</span><span class="p">);</span>
+        <span class="nb">fclose</span><span class="p">(</span><span class="nv">$fp</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="nb">fpassthru</span><span class="p">(</span><span class="nv">$fp</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span></code></pre></div>
+
+<p><code>fopen()</code>을 통해 파일을 열고 <code>fread()</code>나 <code>fpassthur()</code>를 통해 파일을 읽어서 전달하고 있다. 이제 왜 웹서버와 php-fpm 사이의 전송량이 늘어났는지 이해가 되었다. 인디스쿨의 스토리지 서버는 분리되어 있는데 php-fpm에서 파일 다운로드 함수가 호출되면 일단 스토리지의 파일을 php-fpm 서버로 불러와야 하고 이걸 다시 웹서버로 전송하고 웹서버는 이걸 다시 클라이언트로 전송하게 된다. 그래서 다운로드가 많아지게 되면 PHP의 처리량도 늘어나고 따라서 PHP의 응답속도도 느려지게 될 것이라는 가설을 세워볼 수 있다.</p>
+
+<p><img src="/images/2015-05-21/xe파일다운로드함수처리과정.png" alt="" /></p>
+
+<p>따라서 PHP가 파일을 전송하는 것에 직접적으로 관여하지 않게 하면 이 문제를 해결할 수 있다. 이 문제는 생각보다 쉽게 해결하였는데 nginx의 경우 header에 <code>X-Accel-Redirect</code>를 추가하면 PHP의 처리 과정을 거치지 않고 파일을 직접 다운로드 받도록 Redirect 시켜준다.</p>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="n">header</span><span class="p">(</span><span class="s">&quot;X-Accel-Redirect: /path/to/&quot;</span><span class="p">.</span><span class="err">$</span><span class="n">uploaded_filename</span><span class="p">);</span></code></pre></div>
+
+<p>이런 식으로 헤더를 추가하고 파일을 읽어서 전달하는 부분은 삭제하면 된다.</p>
+
+<p>이렇게 코어를 수정하고 나니 어서 빨리 다음 날 아침이 오기를 기다리게 되었다. 다음 날 아침의 모니터링 결과를 보니 아래와 같았다.</p>
+
+<p><img src="/images/2015-05-21/xe-core수정후.png" alt="" /></p>
+
+<p>오! 아침에 많이 치솟기는 하지만 예전처럼 수업 시간표에 비례해서 계단 형태를 띄지 않고 일률적인 처리 속도를 보여주고 있었다. 확실히 xe-core를 수정한 효과가 있는 것 같았다. 그러나 기쁨도 잠시 처리량을 살펴보니 평소에 다소 못미친다는 것을 알게 되었다</p>
+
+<p><img src="/images/2015-05-21/xe-core수정후처리량.png" alt="" /></p>
+
+<p>이날은 2015년 4월 30일, 전국 대부분의 초등학교가 단기 방학을 앞두고 체육대회를 많이 한 날이었다. 아쉽지만 진짜 효과는 연휴가 끝난 뒤에나 확인할 수 있었다.</p>
+
+<h3 id="xe---like---">XE의 검색 기능과 LIKE 쿼리 그리고 통합검색</h3>
+
+<p>연휴가 끝나고 새아침이 밝았다. 나는 기분 좋은 그래프를 볼 수 있었을까? 아니다. 아쉽게도 생각지 못한 다른 문제가 발생했다.</p>
+
+<p><img src="/images/2015-05-21/어버이날대란.png" alt="" /></p>
+
+<p>뭐, 뭐지.. 저 노란 에베레스트산 같은 놈들은. 철썩같이 믿었던 64코어 32GB RAM 짜리 MySQL 서버는 도대체 무얼 하고 있단 말인가!! 이날은 2015년 5월 6일. 어버이 날을 앞두고 선생님들은 하나 같이 ‘어버이날’, ‘카네이션’을 검색하고 계셨다. XE의 게시판 검색이나 통합검색은 <code>LIKE</code> 쿼리를 사용하는데 검색어의 앞뒤로 %를 붙여서 그 단어가 포함되어 있는지 검색한다. 이렇게 <code>LIKE %QUERY%</code>를 시전하게 되면 인덱스도 소용이 없기 때문에 DB의 처리속도는 급격히 떨어지게 된다. 게다가 많은 선생님들께서 지속적으로 검색을 했기 때문에 슬로우 쿼리가 미친듯이 쌓이게 되었다. 큰 규모의 서비스를 운영한다면 절대로 <code>LIKE</code> 쿼리는 쓰지 말자. 아니, MySQL로 검색하는 서비스 자체를 만들지 말자. 이 문제는 Lucene기반의 <a href="https://www.elastic.co">Elasticsearch</a>를 이용한 통합검색 모듈을 직접 개발해서 해결했다. 이에 대한 이야기는 나중에 따로 풀어볼까 한다.</p>
+
+<h3 id="xhprof-">다시 한번 추측하지 말고 계측하라(xhprof의 도입)</h3>
+<p>어버이 날이 지나갔다. 나는 기분 좋은 그래프를 볼 수 있었을까? 또 아니다!! 아니 이번에는 더 심각했다. 평소보다 인디스쿨이 더 느려졌다. 그래프를 보자.</p>
+
+<p><img src="/images/2015-05-21/20150511.png" alt="" /></p>
+
+<p>아침에는 무려 13초에 육박하는 반응 시간을 보였다. 어떻게 된 걸까? 다행히 처리량을 보니 평소의 인디스쿨보다는 다소 많은 수준의 처리를 하고 있었다. 그렇다면 xe-core를 수정 한 이후에 또다른 병목현상이 발생한 것으로 볼 수 있다.</p>
+
+<p><img src="/images/2015-05-21/20150511처리량.png" alt="" /></p>
+
+<p>병목현상의 원인을 밝히는 것이 중요했다. 그런데 이 와중에 개발서버의 반응속도도 함께 느려지는 것을 발견하게 되었다. 그것은 참 이상한 일이었다. ‘개발서버는 나 이외에는 아무도 접속할 이유가 없는데 왜 이렇게 반응속도가 느린 것일까?’라는 생각이 들었을 때 스토리지 서버가 원인일 수도 있겠다는 심증이 생겼다. 그렇지만 물증이 필요했다. 그리고 저 높디 높은 파란 산의 속에는 무엇이 들어있는지 까보고 싶었다. 어째서 처리하는데 13초나 걸린 것인지.</p>
+
+<p>위에서도 잠깐 언급했지만 Newrelic의 APM 유료 버전은 PHP 함수 별로 실행시간을 확인할 수 있는 트랜잭션 기능을 제공하고 있다. 그런데 그 가격이 어마어마해서 도저히 피같은 후원금을 바치면서까지 유료 버전을 구독할 수는 없었다. 금준미주천인혈 옥반가효만성고라…(일절만) 개발 서버에는 <code>xdebug</code>를 통해 프로파일링을 할 수 있었지만 성능 문제로 Production 서버에서 적용할 수는 없었다. 검색을 좀 해보니 페이스북에서 처음 개발했던 <a href="https://github.com/phacility/xhprof">xhprof</a>이라는 녀석이 있었다. <code>xdebug</code>랑은 다르게 passive profiler였고 Production 서버에서도 적용이 가능해 보였다. 프로파일링 결과를 좀더 깔끔하게 보여주는 <a href="https://github.com/perftools/xhgui">xhgui</a>도 함께 적용해서 그 결과를 살펴보니 병목현상의 원인이 무엇인지 알 수 있었다.</p>
+
+<h3 id="nfs--">NFS에서 각자의 웹서버로</h3>
+
+<p><img src="/images/2015-05-21/xhprof.png" alt="" /></p>
+
+<p>xhprof의 프로파일링 결과를 살펴보면 파일 관련 처리 함수의 실행 속도가 눈에 띄게 느리다는 것을 확인할 수 있었다. 역시 스토리지가 문제였던 것 같다. 그간 관리의 편의를 위해 XE 애플리케이션 전체를 스토리지에 넣어두고 NFS를 통해 각 웹서버로 공유해서 사용하고 있었는데 웹서버에서 요청하는 파일 수가 급격히 늘어나다보니 스토리지에서 병목현상이 발생한 것이다. XE를 각 웹서버로 옮기고 나니 확실히 효과가 있었다. 평균 반응 속도가 사용자가 붐빌 때에는 1~3초 그렇지 않을 때에는 4~500ms 수준까지 떨어졌다.</p>
+
+<h3 id="opcache--">Opcache로 스피드 업!</h3>
+
+<p>사람의 욕심은 끝이 없나보다. PHP의 처리 속도를 더 줄여보고 싶다는 생각이 들었다. 한 가지 예전부터 생각했던 것이 바로 PHP 캐싱이다. 사실 전에도 APC나 Xcache 등을 사용하긴 했었는데 언젠가부터 메뉴를 추가하거나 위젯 페이지의 수정 등을 해도 제대로 반영이 되지 않는 문제가 발생해서 적용을 하지 않고 있었기 때문이다.</p>
+
+<p>또 그런 문제가 발생하지 않을까 걱정이 되긴 했지만 최근 XE의 캐시도 memcache에서 처리하고 있었기 때문에 해볼만하다는 생각이 들었다. Opcache를 적용하고 나니 ‘이건 진작 적용했어야 했어!!’라는 생각이 들 수 밖에 없었다. 0시 15분경부터 절반으로 급격히 떨어지는 반응속도를 보라.</p>
+
+<p><img src="/images/2015-05-21/opcache적용후.png" alt="" /></p>
+
+<h3 id="section-3">아직도 남은 숙제</h3>
+
+<p>위의 모든 과정을 마친 최근의 인디스쿨은 아래와 같은 모습이다.</p>
+
+<p><img src="/images/2015-05-21/finally.png" alt="" /></p>
+
+<p>여전히 아침 시간과 오후 시간 일부에는 처리 속도가 늦어지지만 대체적으로 200ms 대를 유지하고 있다. 처리 속도가 늘어나는 부분은 각 웹서버에서 파일을 읽어오는 데 걸리는 부하이기 때문에 SSD 사용을 통해 해결할 예정이다. 그래도 해결이 안 된다면? 그건 그때 가서 생각하자!</p>
+
+<p>쓸데없이 글이 길어진 것 같지만 그간의 과정을 잘 정리해 두고 싶었고, 누군가에게 이 글이 도움이 되거나 또는 이 글을 통해서 인디스쿨이 도움을 받을 수 있게 된다면 더할 나위 없겠다. 업계에 계신 고수님들은 도움 말씀 좀 부탁드립니다.(굽신)</p>
+
+<p>끝으로 언제나 무보수 유노동 열정페이로 인디스쿨에 봉사하시는 기술지원팀 및 운영진 선생님들 화이팅입니다!</p>
+
+</article>
+
+
+
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname  = 'hangoutwithprogramming';
+    var disqus_identifier = '/%EC%84%9C%EB%B2%84%EC%9A%B4%EC%98%81/2015/05/21/인디스쿨의_서버_응답_속도_최적화_이야기';
+    var disqus_title      = '';
+
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+        © dev.jdssem.com
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-61683487-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+
+
+</body>
+</html>
